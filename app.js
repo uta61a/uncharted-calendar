@@ -1,4 +1,6 @@
 const KEYS = {
+  goals: "uncharted-calendar-goals",
+  goalFrames: "uncharted-calendar-goal-frames",
   logs: "time-log-calendar-entries",
   plans: "time-plan-calendar-plans",
   globalMemos: "time-management-calendar-global-memos",
@@ -23,6 +25,11 @@ const I18N = {
     menuOpen: "メニューを開く",
     settings: "設定",
     calendars: "カレンダー",
+    goal: "目標",
+    addGoalButton: "目標を追加",
+    addGoalFrameButton: "枠を追加",
+    goalPlaceholder: "目標を入力",
+    goalDeleted: "目標を削除しました。",
     log: "ログ",
     plan: "プラン",
     globalMemo: "メモ",
@@ -37,19 +44,16 @@ const I18N = {
     calendar: "カレンダー",
     currentTime: "現在",
     historyMode: "履歴",
-    planMode: "予定",
     currentModeEnabled: "現在モードに切り替えました。",
     historyModeEnabled: "履歴モードに切り替えました。",
-    planModeEnabled: "予定モードに切り替えました。",
     oneDay: "1日",
     oneWeek: "1週間",
     oneMonth: "1ヶ月",
     planTab: "予定",
     logSection: "ログ",
     planSection: "プラン",
-    logInputLabel: "ログ",
+    logInputLabel: "行動記録",
     logDateTimeLabel: "日時",
-    planDateTimeLabel: "開始時刻",
     planInputLabel: "予定",
     saveLogButton: "記録する",
     savePlanButton: "予定する",
@@ -85,7 +89,7 @@ const I18N = {
     logType: "記録",
     planType: "予定",
     memoType: "メモ",
-    globalMemoInputLabel: "メモしたいこと",
+    globalMemoInputLabel: "内容",
     saveGlobalMemoButton: "メモを保存",
     saveMemoButton: "メモを保存",
     date: "日付",
@@ -124,6 +128,11 @@ const I18N = {
     menuOpen: "Open menu",
     settings: "Settings",
     calendars: "Calendar",
+    goal: "Goal",
+    addGoalButton: "Add Goal",
+    addGoalFrameButton: "Add Frame",
+    goalPlaceholder: "Enter a goal",
+    goalDeleted: "Goal deleted.",
     log: "Log",
     plan: "Plan",
     globalMemo: "Memo",
@@ -138,19 +147,16 @@ const I18N = {
     calendar: "Calendar",
     currentTime: "Now",
     historyMode: "History",
-    planMode: "Plan",
     currentModeEnabled: "Switched to now mode.",
     historyModeEnabled: "Switched to history mode.",
-    planModeEnabled: "Switched to plan mode.",
     oneDay: "1 Day",
     oneWeek: "1 Week",
     oneMonth: "1 Month",
     planTab: "Plan",
     logSection: "Log",
     planSection: "Plan",
-    logInputLabel: "Log",
+    logInputLabel: "Action Log",
     logDateTimeLabel: "Date and time",
-    planDateTimeLabel: "Start time",
     planInputLabel: "Plan",
     saveLogButton: "Save Log",
     savePlanButton: "Save Plan",
@@ -186,7 +192,7 @@ const I18N = {
     logType: "Log",
     planType: "Plan",
     memoType: "Memo",
-    globalMemoInputLabel: "Memo",
+    globalMemoInputLabel: "Content",
     saveGlobalMemoButton: "Save Memo",
     saveMemoButton: "Save Memo",
     date: "Date",
@@ -233,6 +239,9 @@ const els = {
   currentSeconds: document.getElementById("currentSeconds"),
   currentMeta: document.getElementById("currentMeta"),
   heroSection: document.getElementById("heroSection"),
+  goalView: document.getElementById("goalView"),
+  goalList: document.getElementById("goalList"),
+  addGoalFrameButton: document.getElementById("addGoalFrameButton"),
   calendarsView: document.getElementById("calendarsView"),
   recordLogScopeButton: document.getElementById("recordLogScopeButton"),
   recordPlanScopeButton: document.getElementById("recordPlanScopeButton"),
@@ -252,15 +261,16 @@ const els = {
   logPanel: document.querySelector(".record-log-panel"),
   logDateTimeLabel: document.getElementById("logDateTimeLabel"),
   logInputLabel: document.getElementById("logInputLabel"),
+  logCostInput: document.getElementById("logCostInput"),
+  logBenefitInput: document.getElementById("logBenefitInput"),
+  logCostLabel: document.getElementById("logCostLabel"),
+  logBenefitLabel: document.getElementById("logBenefitLabel"),
   planTextInput: document.getElementById("planTextInput"),
   costInput: document.getElementById("costInput"),
   benefitInput: document.getElementById("benefitInput"),
-  planDateTimeInput: document.getElementById("planDateTimeInput"),
-  setPlanNowButton: document.getElementById("setPlanNowButton"),
   savePlanButton: document.getElementById("savePlanButton"),
   planSectionHeading: document.getElementById("planSectionHeading"),
   planPanel: document.querySelector(".record-plan-panel"),
-  planDateTimeLabel: document.getElementById("planDateTimeLabel"),
   planInputLabel: document.getElementById("planInputLabel"),
   costLabel: document.getElementById("costLabel"),
   benefitLabel: document.getElementById("benefitLabel"),
@@ -287,6 +297,7 @@ const els = {
   selectedDateLabel: document.getElementById("selectedDateLabel"),
   selectedEntries: document.getElementById("selectedEntries"),
   bottomNav: document.getElementById("bottomNav"),
+  goalTabButton: document.getElementById("goalTabButton"),
   primaryTabButton: document.getElementById("primaryTabButton"),
   calendarTabButton: document.getElementById("calendarTabButton"),
   textTabButton: document.getElementById("textTabButton"),
@@ -297,6 +308,7 @@ const els = {
   exportScopeLogButton: document.getElementById("exportScopeLogButton"),
   exportScopePlanButton: document.getElementById("exportScopePlanButton"),
   exportScopeMemoButton: document.getElementById("exportScopeMemoButton"),
+  exportScopeGoalButton: document.getElementById("exportScopeGoalButton"),
   exportDayButton: document.getElementById("exportDayButton"),
   exportWeekButton: document.getElementById("exportWeekButton"),
   exportMonthButton: document.getElementById("exportMonthButton"),
@@ -332,7 +344,7 @@ const els = {
 let now = new Date();
 let selectedDateKey = dateKeyFromDate(now);
 let visibleMonthKey = monthKeyFromDate(now);
-let currentView = "calendars";
+let currentView = "goal";
 let currentMode = "log";
 let calendarScope = "log";
 let recordScope = "log";
@@ -340,7 +352,7 @@ let isCalendarExpanded = false;
 let textExportMode = "all";
 let textScope = "all";
 let isLogNowMode = false;
-let isPlanNowMode = false;
+let focusGoalId = "";
 let language = loadLanguage();
 let themeColor = loadThemeColor();
 let lastThemeMode = "plan";
@@ -508,18 +520,6 @@ function formatClockDate(date) {
   return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 }
 
-function formatMonthDay(dateKey) {
-  const { month, day } = parseDateKey(dateKey);
-  if (language === "ja") return `${month}月${day}日`;
-  return `${month}/${day}`;
-}
-
-function formatYearMonth(dateKey) {
-  const { year, month } = parseDateKey(dateKey);
-  if (language === "ja") return `${year}年${month}月`;
-  return new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(new Date(year, month - 1, 1));
-}
-
 function escapeHtml(text) {
   return String(text)
     .replaceAll("&", "&amp;")
@@ -527,6 +527,58 @@ function escapeHtml(text) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function loadGoals() {
+  return readStorage(KEYS.goals, []);
+}
+
+function saveGoals(goals) {
+  writeStorage(KEYS.goals, goals);
+}
+
+function loadGoalFramesRaw() {
+  return readStorage(KEYS.goalFrames, []);
+}
+
+function saveGoalFrames(frames) {
+  writeStorage(KEYS.goalFrames, frames);
+}
+
+function ensureGoalFrames() {
+  let frames = loadGoalFramesRaw();
+  let goals = loadGoals();
+  const nowIso = new Date().toISOString();
+  if (!frames.length) {
+    if (!goals.length) return [];
+    frames = [{
+      id: crypto.randomUUID(),
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    }];
+    goals = goals.map((goal) => goal.frameId ? goal : { ...goal, frameId: frames[0].id });
+    saveGoalFrames(frames);
+    saveGoals(goals);
+    return frames;
+  }
+  const fallbackFrameId = frames[0].id;
+  let didMigrate = false;
+  goals = goals.map((goal) => {
+    if (goal.frameId) return goal;
+    didMigrate = true;
+    return { ...goal, frameId: fallbackFrameId };
+  });
+  if (didMigrate) saveGoals(goals);
+  return frames;
+}
+
+function pruneEmptyGoalFrames() {
+  const frames = ensureGoalFrames();
+  const goals = loadGoals();
+  const usedFrameIds = new Set(goals.map((goal) => goal.frameId).filter(Boolean));
+  const nextFrames = frames.filter((frame) => usedFrameIds.has(frame.id));
+  if (nextFrames.length !== frames.length) saveGoalFrames(nextFrames);
+  return nextFrames;
 }
 
 function loadLogs() {
@@ -841,13 +893,13 @@ function itemDate(item) {
   return item.isoDateTime || item.createdAt || `${item.dateKey}T${item.time || "00:00"}:00`;
 }
 
-function planDetail(plan) {
-  const cons = plan.cons || plan.cost || "";
-  const pros = plan.pros || plan.benefit || "";
+function effortBenefitDetail(item) {
+  const cons = item.cons || item.cost || "";
+  const pros = item.pros || item.benefit || "";
   const parts = [];
   if (cons) parts.push(`${t("cost")}: ${cons}`);
   if (pros) parts.push(`${t("benefit")}: ${pros}`);
-  if (!parts.length && plan.reward) parts.push(`${t("cost")}＝${t("benefit")}: ${plan.reward}`);
+  if (!parts.length && item.reward) parts.push(`${t("cost")}＝${t("benefit")}: ${item.reward}`);
   return parts.join(" / ");
 }
 
@@ -862,7 +914,7 @@ function memoDisplayTime(memo) {
 function renderEntryCard(type, item, options = {}) {
   const showType = options.showType !== false;
   const label = type === "log" ? t("logType") : type === "plan" ? t("planType") : t("memoType");
-  const detail = type === "plan" ? planDetail(item) : "";
+  const detail = type === "log" || type === "plan" ? effortBenefitDetail(item) : "";
   const entryTime = type === "memo" ? memoDisplayTime(item) : item.time;
   const dataAttr = type === "log"
     ? `data-log-id="${item.id}"`
@@ -944,7 +996,10 @@ function getTextExportItems(dateKey, scope) {
     const logs = loadLogs()
       .filter((item) => item.dateKey === dateKey)
       .sort((a, b) => itemDate(a).localeCompare(itemDate(b)))
-      .map((item) => `${item.time} ${item.text}`);
+      .map((item) => {
+        const detail = effortBenefitDetail(item);
+        return `${item.time} ${item.text}${detail ? `（${detail}）` : ""}`;
+      });
     return logs;
   }
   if (scope === "plan") {
@@ -952,7 +1007,7 @@ function getTextExportItems(dateKey, scope) {
       .filter((item) => item.dateKey === dateKey)
       .sort((a, b) => itemDate(a).localeCompare(itemDate(b)))
       .map((item) => {
-        const detail = planDetail(item);
+        const detail = effortBenefitDetail(item);
         return `${item.time} ${item.text}${detail ? `（${detail}）` : ""}`;
       });
     return plans;
@@ -962,20 +1017,38 @@ function getTextExportItems(dateKey, scope) {
     .map((memo) => `[${t("memoType")}] ${memo.text}`);
 }
 
+function getHumanGoalExportText() {
+  const frames = ensureGoalFrames();
+  const goals = loadGoals();
+  const sections = frames.map((frame, frameIndex) => {
+    const frameGoals = goals
+      .filter((goal) => goal.frameId === frame.id)
+      .map((goal) => String(goal.text || "").trim())
+      .filter(Boolean);
+    if (!frameGoals.length) return "";
+    return [`${t("goal")} ${frameIndex + 1}`, ...frameGoals.map((goal, index) => `${index + 1}. ${goal}`)].join("\n");
+  }).filter(Boolean);
+  if (!sections.length) return "";
+  return [t("goal"), ...sections].join("\n\n");
+}
+
 function getHumanExportText(scope = textScope) {
+  if (scope === "goal") return getHumanGoalExportText();
   const dateKeys = getTextExportDateKeys(scope);
-  return dateKeys.map((dateKey) => {
+  const datedText = dateKeys.map((dateKey) => {
     const items = getTextExportItems(dateKey, scope);
     if (!items.length) return "";
     return [formatDateHeader(dateKey), ...items].join("\n");
   }).filter(Boolean).join("\n\n");
+  if (scope !== "all") return datedText;
+  return [getHumanGoalExportText(), datedText].filter(Boolean).join("\n\n");
 }
 
 function getMachineExportRange() {
   return {
     mode: textExportMode,
     selectedDate: selectedDateKey,
-    dateKeys: getTextExportDateKeys(textScope),
+    dateKeys: textScope === "goal" ? [] : getTextExportDateKeys(textScope),
   };
 }
 
@@ -996,6 +1069,8 @@ function getMachineExportItems(dateKey, scope) {
         dateKey: item.dateKey,
         time: item.time,
         text: item.text,
+        cost: item.cons || item.cost || "",
+        benefit: item.pros || item.benefit || "",
         isoDateTime: item.isoDateTime || "",
       }));
   }
@@ -1026,12 +1101,25 @@ function getMachineExportItems(dateKey, scope) {
     }));
 }
 
+function getMachineExportGoals() {
+  return loadGoals()
+    .map((goal) => ({
+      type: "goal",
+      frameId: goal.frameId || "",
+      text: String(goal.text || "").trim(),
+      createdAt: goal.createdAt || "",
+      updatedAt: goal.updatedAt || "",
+    }))
+    .filter((goal) => goal.text);
+}
+
 function getMachineExportData() {
   const range = getMachineExportRange();
   const dates = range.dateKeys.map((dateKey) => ({
     dateKey,
     items: getMachineExportItems(dateKey, textScope),
   })).filter((group) => group.items.length);
+  const includeGoals = textScope === "all" || textScope === "goal";
   return {
     format: "uncharted-calendar-import",
     version: 1,
@@ -1039,6 +1127,8 @@ function getMachineExportData() {
     scope: textScope,
     range: range.mode,
     selectedDate: range.selectedDate,
+    goalFrames: includeGoals ? ensureGoalFrames() : [],
+    goals: includeGoals ? getMachineExportGoals() : [],
     dates,
   };
 }
@@ -1070,7 +1160,12 @@ function parseImportData(rawText) {
 }
 
 function getImportItems(data, scope) {
-  return data.dates.flatMap((group) => {
+  const goalItems = Array.isArray(data?.goals) && (scope === "all" || scope === "goal")
+    ? data.goals
+      .filter((goal) => goal?.text)
+      .map((goal) => ({ ...goal, type: "goal" }))
+    : [];
+  const datedItems = data.dates.flatMap((group) => {
     const groupDateKey = isValidDateKey(group?.dateKey) ? group.dateKey : "";
     return Array.isArray(group?.items)
       ? group.items
@@ -1081,26 +1176,31 @@ function getImportItems(data, scope) {
         }))
       : [];
   }).filter((item) => item.dateKey && item.text);
+  return [...goalItems, ...datedItems];
 }
 
 function normalizeImportScope(scope) {
-  return ["all", "log", "plan", "memo"].includes(scope) ? scope : "";
+  return ["all", "log", "plan", "memo", "goal"].includes(scope) ? scope : "";
 }
 
 function inferImportScope(data) {
   const exportedScope = normalizeImportScope(data?.scope);
   if (exportedScope) return exportedScope;
   const types = new Set(
-    data.dates.flatMap((group) => Array.isArray(group?.items)
+    [
+      ...(Array.isArray(data?.goals) && data.goals.length ? ["goal"] : []),
+      ...data.dates.flatMap((group) => Array.isArray(group?.items)
       ? group.items.map((item) => item?.type).filter(Boolean)
       : []),
+    ],
   );
   if (types.size === 1) return normalizeImportScope(Array.from(types)[0]) || "all";
   return "all";
 }
 
 function importSignature(item) {
-  if (item.type === "plan") {
+  if (item.type === "goal") return ["goal", item.text || ""].join("\u0001");
+  if (item.type === "log" || item.type === "plan") {
     return [
       item.dateKey,
       item.time || "",
@@ -1110,6 +1210,64 @@ function importSignature(item) {
     ].join("\u0001");
   }
   return [item.dateKey, item.time || "", item.text || ""].join("\u0001");
+}
+
+function importGoals(items, frames = []) {
+  const existing = loadGoals();
+  const signatures = new Set(existing.map((item) => importSignature({ ...item, type: "goal" })));
+  const candidates = [];
+  items.forEach((item) => {
+    const candidate = {
+      ...item,
+      text: String(item.text || "").replace(/\s+/g, " ").trim(),
+    };
+    const signature = importSignature({ ...candidate, type: "goal" });
+    if (!candidate.text || signatures.has(signature)) return;
+    signatures.add(signature);
+    candidates.push(candidate);
+  });
+  const importedFrameIds = new Set(candidates.map((item) => item.frameId).filter(Boolean));
+  const frameIdMap = {};
+  const currentFrames = ensureGoalFrames();
+  const nextFrames = [...currentFrames];
+  const frameSource = Array.isArray(frames) ? frames : [];
+  const needsFallbackFrame = candidates.some((item) => !item.frameId) && !currentFrames.length;
+  let fallbackFrameId = currentFrames[0]?.id || "";
+  if (needsFallbackFrame) {
+    const nowIso = new Date().toISOString();
+    const fallbackFrame = {
+      id: crypto.randomUUID(),
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    };
+    fallbackFrameId = fallbackFrame.id;
+    nextFrames.push(fallbackFrame);
+  }
+  importedFrameIds.forEach((oldFrameId) => {
+    const frame = frameSource.find((item) => item.id === oldFrameId);
+    const nextFrame = {
+      id: crypto.randomUUID(),
+      createdAt: frame?.createdAt || new Date().toISOString(),
+      updatedAt: frame?.updatedAt || frame?.createdAt || new Date().toISOString(),
+    };
+    frameIdMap[oldFrameId] = nextFrame.id;
+    nextFrames.push(nextFrame);
+  });
+  if (Object.keys(frameIdMap).length || needsFallbackFrame) saveGoalFrames(nextFrames);
+  const imported = [];
+  candidates.forEach((item) => {
+    const nowIso = new Date().toISOString();
+    const next = {
+      id: crypto.randomUUID(),
+      frameId: frameIdMap[item.frameId] || fallbackFrameId,
+      text: item.text,
+      createdAt: item.createdAt || nowIso,
+      updatedAt: item.updatedAt || item.createdAt || nowIso,
+    };
+    imported.push(next);
+  });
+  if (imported.length) saveGoals([...existing, ...imported]);
+  return imported;
 }
 
 function importLogs(items) {
@@ -1123,6 +1281,8 @@ function importLogs(items) {
       dateKey: item.dateKey,
       time,
       text: String(item.text),
+      cons: String(item.cost || item.cons || ""),
+      pros: String(item.benefit || item.pros || ""),
       isoDateTime: item.isoDateTime || isoFromImportDateTime(item.dateKey, time),
     };
     const signature = importSignature({ ...next, type: "log" });
@@ -1199,22 +1359,27 @@ async function importSelectedFile() {
   const items = getImportItems(data, fileScope);
   const imported = fileScope === "all"
     ? [
+      ...importGoals(items.filter((item) => item.type === "goal"), data.goalFrames),
       ...importLogs(items.filter((item) => item.type === "log")),
       ...importPlans(items.filter((item) => item.type === "plan")),
       ...importMemos(items.filter((item) => item.type === "memo")),
     ]
-    : fileScope === "log"
-      ? importLogs(items)
-      : fileScope === "plan"
-        ? importPlans(items)
-        : importMemos(items);
+    : fileScope === "goal"
+      ? importGoals(items, data.goalFrames)
+      : fileScope === "log"
+        ? importLogs(items)
+        : fileScope === "plan"
+          ? importPlans(items)
+          : importMemos(items);
   if (!imported.length) {
     showToast(t("noImportItems"), "error");
     return;
   }
-  const lastImported = imported[imported.length - 1];
-  selectedDateKey = lastImported.dateKey;
-  visibleMonthKey = lastImported.dateKey.slice(0, 7);
+  const lastDatedImport = [...imported].reverse().find((item) => item.dateKey);
+  if (lastDatedImport) {
+    selectedDateKey = lastDatedImport.dateKey;
+    visibleMonthKey = lastDatedImport.dateKey.slice(0, 7);
+  }
   els.importFileInput.value = "";
   renderAll();
   showToast(t("importDone", { count: imported.length }));
@@ -1236,9 +1401,61 @@ function bindDeleteButtons(container) {
         saveGlobalMemos(loadGlobalMemos().filter((memo) => memo.id !== button.dataset.globalMemoId));
         showToast(t("globalMemoDeleted"));
       }
+      if (button.dataset.goalId) {
+        saveGoals(loadGoals().filter((goal) => goal.id !== button.dataset.goalId));
+        pruneEmptyGoalFrames();
+        showToast(t("goalDeleted"));
+      }
       renderAll();
     });
   });
+}
+
+function renderGoals() {
+  const frames = pruneEmptyGoalFrames();
+  const goals = loadGoals();
+  const goalsByFrame = goals.reduce((map, goal) => {
+    const frameId = goal.frameId || frames[0]?.id || "";
+    if (!map[frameId]) map[frameId] = [];
+    map[frameId].push(goal);
+    return map;
+  }, {});
+  els.goalList.innerHTML = frames.map((frame) => {
+    const frameGoals = goalsByFrame[frame.id]?.length
+      ? goalsByFrame[frame.id]
+      : [];
+    if (!frameGoals.length) return "";
+    return `
+    <section class="panel goal-frame-panel" data-goal-frame-id="${frame.id}">
+      <div class="panel-heading">
+        <h2>${t("goal")}</h2>
+      </div>
+      <div class="goal-lines">
+        ${frameGoals.map((goal) => `
+          <div class="goal-line">
+            ${goal.id ? `<button class="entry-delete" type="button" data-goal-id="${goal.id}" aria-label="${t("deleteConfirm")}">×</button>` : ""}
+            <input class="goal-input" maxlength="200" type="text" data-goal-id="${goal.id}" data-goal-frame-id="${frame.id}" placeholder="${t("goalPlaceholder")}" value="${escapeHtml(String(goal.text || "").replace(/\s+/g, " ").trim())}">
+          </div>
+        `).join("")}
+      </div>
+      <div class="goal-inner-action">
+        <button class="ghost-button detail-link-button add-goal-line-button" type="button" data-goal-frame-id="${frame.id}">${t("addGoalButton")}</button>
+      </div>
+    </section>
+  `;
+  }).filter(Boolean).join("");
+  bindDeleteButtons(els.goalList);
+  els.goalList.querySelectorAll(".goal-input").forEach((input) => {
+    input.addEventListener("input", updateGoalBox);
+  });
+  els.goalList.querySelectorAll(".add-goal-line-button").forEach((button) => {
+    button.addEventListener("click", () => addGoalLine(button.dataset.goalFrameId));
+  });
+  if (focusGoalId) {
+    const target = els.goalList.querySelector(`[data-goal-id="${focusGoalId}"]`);
+    if (target) target.focus({ preventScroll: true });
+    focusGoalId = "";
+  }
 }
 
 function renderSelectedEntries() {
@@ -1286,6 +1503,7 @@ function renderTextExport() {
     ["log", els.exportScopeLogButton, t("log")],
     ["plan", els.exportScopePlanButton, t("plan")],
     ["memo", els.exportScopeMemoButton, t("globalMemo")],
+    ["goal", els.exportScopeGoalButton, t("goal")],
   ];
   exportScopeButtons.forEach(([scope, button, label]) => {
     button.textContent = label;
@@ -1296,13 +1514,6 @@ function renderTextExport() {
   els.exportMonthButton.classList.toggle("is-active", textExportMode === "month");
   els.exportAllButton.classList.toggle("is-active", textExportMode === "all");
   els.textExportOutput.value = getHumanExportText();
-}
-
-function getScopeLabel(scope) {
-  if (scope === "all") return t("all");
-  if (scope === "log") return t("log");
-  if (scope === "plan") return t("plan");
-  return t("globalMemo");
 }
 
 function renderImport() {
@@ -1321,6 +1532,7 @@ function renderDrawerState() {
 
 function getTitleKey(view) {
   return {
+    goal: "calendarsTitle",
     calendars: "calendarsTitle",
     calendar: "calendarsTitle",
     text: "exportTitle",
@@ -1330,19 +1542,22 @@ function getTitleKey(view) {
 }
 
 function renderBottomNav() {
-  const isProductArea = ["calendars", "calendar", "text", "import"].includes(currentView);
+  const isProductArea = ["goal", "calendars", "calendar", "text", "import"].includes(currentView);
   els.bottomNav.hidden = !isProductArea;
   if (!isProductArea) return;
 
   if (currentView === "text" || currentView === "import") {
+    els.goalTabButton.hidden = true;
     els.primaryTabButton.hidden = false;
     els.calendarTabButton.hidden = true;
     els.textTabButton.hidden = true;
     els.exportTabButton.hidden = true;
     els.primaryTabButton.textContent = currentView === "text" ? t("text") : t("import");
+    els.goalTabButton.classList.remove("is-active");
     els.primaryTabButton.classList.add("is-active");
     els.calendarTabButton.classList.remove("is-active");
     els.textTabButton.classList.remove("is-active");
+    els.goalTabButton.setAttribute("aria-selected", "false");
     els.primaryTabButton.setAttribute("aria-selected", "true");
     els.calendarTabButton.setAttribute("aria-selected", "false");
     els.textTabButton.setAttribute("aria-selected", "false");
@@ -1350,20 +1565,25 @@ function renderBottomNav() {
     return;
   }
 
+  els.goalTabButton.hidden = false;
   els.primaryTabButton.hidden = false;
   els.calendarTabButton.hidden = false;
   els.textTabButton.hidden = false;
   els.exportTabButton.hidden = true;
+  els.goalTabButton.textContent = t("goal");
   els.primaryTabButton.textContent = t("record");
   els.calendarTabButton.textContent = t("history");
   els.textTabButton.hidden = true;
   els.textTabButton.classList.remove("is-active");
 
+  const goalActive = currentView === "goal";
   const primaryActive = currentView === "calendars";
   const secondaryActive = currentView === "calendar";
+  els.goalTabButton.classList.toggle("is-active", goalActive);
   els.primaryTabButton.classList.toggle("is-active", primaryActive);
   els.calendarTabButton.classList.toggle("is-active", secondaryActive);
   els.exportTabButton.classList.remove("is-active");
+  els.goalTabButton.setAttribute("aria-selected", String(goalActive));
   els.primaryTabButton.setAttribute("aria-selected", String(primaryActive));
   els.calendarTabButton.setAttribute("aria-selected", String(secondaryActive));
   els.textTabButton.setAttribute("aria-selected", "false");
@@ -1391,6 +1611,7 @@ function renderStaticText() {
   els.resetConfirmLabel.textContent = t("resetConfirmLabel");
   els.cancelResetButton.textContent = t("cancel");
   els.confirmResetButton.textContent = t("resetConfirmButton");
+  els.addGoalFrameButton.textContent = t("addGoalFrameButton");
   els.globalMemoSectionHeading.textContent = t("memoType");
   els.globalMemoInputLabel.textContent = t("globalMemoInputLabel");
   els.saveGlobalMemoButton.textContent = t("saveGlobalMemoButton");
@@ -1413,28 +1634,25 @@ function renderStaticText() {
   els.logSectionHeading.textContent = t("logSection");
   els.logDateTimeLabel.textContent = t("logDateTimeLabel");
   els.logInputLabel.textContent = t("logInputLabel");
+  els.logCostLabel.textContent = t("cost");
+  els.logBenefitLabel.textContent = t("benefit");
   els.saveLogButton.textContent = t("saveLogButton");
   els.setLogNowButton.textContent = isLogNowMode ? t("historyMode") : t("currentTime");
   els.setLogNowButton.classList.toggle("is-current-mode", isLogNowMode);
   els.logDateTimeInput.classList.toggle("is-current-mode", isLogNowMode);
   els.logDateTimeInput.readOnly = isLogNowMode;
   els.planSectionHeading.textContent = t("planSection");
-  els.planDateTimeLabel.textContent = t("planDateTimeLabel");
   els.planInputLabel.textContent = t("planInputLabel");
   els.costLabel.textContent = t("cost");
   els.benefitLabel.textContent = t("benefit");
   els.savePlanButton.textContent = t("savePlanButton");
-  els.setPlanNowButton.textContent = isPlanNowMode ? t("planMode") : t("currentTime");
-  els.setPlanNowButton.classList.toggle("is-current-mode", isPlanNowMode);
-  els.planDateTimeInput.classList.toggle("is-current-mode", isPlanNowMode);
-  els.planDateTimeInput.readOnly = isPlanNowMode;
   els.appTitle.textContent = t(getTitleKey(currentView));
   renderBottomNav();
 }
 
 function setTheme() {
   const themedView = ["calendars", "calendar"].includes(currentView);
-  const themeMode = currentView === "text" || currentView === "import" || currentView === "settings"
+  const themeMode = currentView === "goal" || currentView === "text" || currentView === "import" || currentView === "settings"
       ? "memo"
       : currentView === "calendars"
         ? recordScope
@@ -1467,6 +1685,7 @@ function setView(view, mode = currentMode) {
   currentView = view;
   els.appTitle.textContent = t(getTitleKey(view));
   [
+    ["goal", els.goalView],
     ["calendars", els.calendarsView],
     ["calendar", els.calendarView],
     ["text", els.textView],
@@ -1497,7 +1716,7 @@ function closeDrawer() {
   els.drawerButton.setAttribute("aria-expanded", "false");
 }
 
-function addLog(text, date) {
+function addLog(text, date, cons = "", pros = "") {
   const parts = {
     year: date.getFullYear(),
     month: date.getMonth() + 1,
@@ -1510,6 +1729,8 @@ function addLog(text, date) {
     dateKey: dateKeyFromDate(date),
     time: formatTime(date),
     text,
+    cons,
+    pros,
     isoDateTime: date.toISOString(),
   };
   saveLogs([...loadLogs(), log]);
@@ -1537,8 +1758,10 @@ function saveLog() {
     els.logDateTimeInput.focus();
     return;
   }
-  addLog(text, date);
+  addLog(text, date, els.logCostInput.value.trim(), els.logBenefitInput.value.trim());
   els.activityInput.value = "";
+  els.logCostInput.value = "";
+  els.logBenefitInput.value = "";
 }
 
 function syncLogNowInput() {
@@ -1623,14 +1846,6 @@ function savePlan() {
   renderAll();
 }
 
-function syncPlanNowInput() {
-  syncLogNowInput();
-}
-
-function setPlanStartToNow() {
-  setLogDateTimeMode();
-}
-
 function saveMemoFromInput(input) {
   const text = input.value.trim();
   const date = getSharedRecordDate();
@@ -1659,6 +1874,62 @@ function saveMemoFromInput(input) {
 
 function saveGlobalMemo() {
   saveMemoFromInput(els.globalMemoInput);
+}
+
+function createEmptyGoal(frameId) {
+  const goalId = crypto.randomUUID();
+  const nowIso = new Date().toISOString();
+  const goal = {
+    id: goalId,
+    frameId,
+    text: "",
+    createdAt: nowIso,
+    updatedAt: nowIso,
+  };
+  saveGoals([...loadGoals(), goal]);
+  focusGoalId = goalId;
+  return goal;
+}
+
+function addGoalLine(frameId) {
+  const frames = ensureGoalFrames();
+  const targetFrameId = frames.some((frame) => frame.id === frameId) ? frameId : frames[0].id;
+  createEmptyGoal(targetFrameId);
+  renderAll();
+}
+
+function addGoalFrame() {
+  const nowIso = new Date().toISOString();
+  const frame = {
+    id: crypto.randomUUID(),
+    createdAt: nowIso,
+    updatedAt: nowIso,
+  };
+  saveGoalFrames([...ensureGoalFrames(), frame]);
+  createEmptyGoal(frame.id);
+  renderAll();
+}
+
+function updateGoalBox(event) {
+  const input = event.currentTarget;
+  const text = input.value;
+  const goals = loadGoals();
+  const nowIso = new Date().toISOString();
+  if (!input.dataset.goalId) {
+    const goal = {
+      id: crypto.randomUUID(),
+      frameId: input.dataset.goalFrameId || ensureGoalFrames()[0].id,
+      text,
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    };
+    saveGoals([...goals, goal]);
+    input.dataset.goalId = goal.id;
+    return;
+  }
+  saveGoals(goals.map((goal) => goal.id === input.dataset.goalId
+    ? { ...goal, text, updatedAt: nowIso }
+    : goal));
 }
 
 function getWeekRowIndex(cells) {
@@ -1810,7 +2081,7 @@ function resetInternalData() {
     els.resetConfirmInput.focus();
     return;
   }
-  [KEYS.logs, KEYS.plans, KEYS.globalMemos, ...LEGACY_MEMO_KEYS].forEach((key) => {
+  [KEYS.goals, KEYS.goalFrames, KEYS.logs, KEYS.plans, KEYS.globalMemos, ...LEGACY_MEMO_KEYS].forEach((key) => {
     localStorage.removeItem(key);
   });
   closeResetDialog();
@@ -1822,10 +2093,9 @@ function resetInternalData() {
   textExportMode = "all";
   textScope = "all";
   isLogNowMode = false;
-  isPlanNowMode = false;
   lastThemeMode = "plan";
   initializeDateInputs();
-  setView("calendars");
+  setView("goal");
   showToast(t("resetDataDone"));
 }
 
@@ -1833,7 +2103,7 @@ function handleEnter(event) {
   if (event.key !== "Enter" || event.isComposing) return;
   if (event.shiftKey) return;
   event.preventDefault();
-  if (event.currentTarget === els.activityInput) saveLog();
+  if ([els.activityInput, els.logCostInput, els.logBenefitInput].includes(event.currentTarget)) saveLog();
   if ([els.planTextInput, els.costInput, els.benefitInput].includes(event.currentTarget)) savePlan();
   if (event.currentTarget === els.globalMemoInput) saveGlobalMemo();
 }
@@ -1842,6 +2112,7 @@ function renderAll() {
   applyThemeColors();
   renderStaticText();
   renderClock();
+  renderGoals();
   renderCalendar();
   renderRecordScopeControls();
   renderCalendarScopeControls();
@@ -1852,10 +2123,6 @@ function renderAll() {
 
 function initializeDateInputs() {
   syncLogNowInput();
-  const soon = new Date();
-  soon.setMinutes(soon.getMinutes() + 30);
-  els.planDateTimeInput.value = localDateTimeValue(soon);
-  els.planDateTimeInput.min = localDateTimeValue(new Date());
 }
 
 function initialize() {
@@ -1867,6 +2134,7 @@ function initialize() {
   els.drawerBackdrop.addEventListener("click", closeDrawer);
   els.drawerLinks.forEach((button) => button.addEventListener("click", () => setView(button.dataset.drawerTarget)));
   els.settingsIconButton.addEventListener("click", () => setView("settings"));
+  els.goalTabButton.addEventListener("click", () => setView("goal"));
   els.primaryTabButton.addEventListener("click", () => {
     if (currentView === "text") {
       setView("text", currentMode);
@@ -1904,9 +2172,9 @@ function initialize() {
     setView("text");
   });
   els.saveLogButton.addEventListener("click", saveLog);
+  els.addGoalFrameButton.addEventListener("click", addGoalFrame);
   els.savePlanButton.addEventListener("click", savePlan);
   els.setLogNowButton.addEventListener("click", setLogDateTimeMode);
-  els.setPlanNowButton.addEventListener("click", setPlanStartToNow);
   els.saveGlobalMemoButton.addEventListener("click", saveGlobalMemo);
   els.recordLogScopeButton.addEventListener("click", () => {
     recordScope = "log";
@@ -1925,7 +2193,7 @@ function initialize() {
   els.calendarLogScopeButton.addEventListener("click", () => setView("calendar", "log"));
   els.calendarPlanScopeButton.addEventListener("click", () => setView("calendar", "plan"));
   els.calendarMemoScopeButton.addEventListener("click", () => setView("calendar", "memo"));
-  [els.activityInput, els.planTextInput, els.costInput, els.benefitInput, els.globalMemoInput].forEach((input) => {
+  [els.activityInput, els.logCostInput, els.logBenefitInput, els.planTextInput, els.costInput, els.benefitInput, els.globalMemoInput].forEach((input) => {
     input.addEventListener("keydown", handleEnter);
   });
   els.logDateTimeInput.addEventListener("change", syncSelectedDateFromSharedInput);
@@ -1980,6 +2248,10 @@ function initialize() {
     textScope = "memo";
     renderAll();
   });
+  els.exportScopeGoalButton.addEventListener("click", () => {
+    textScope = "goal";
+    renderAll();
+  });
   els.copyTextButton.addEventListener("click", copyText);
   els.saveHumanTextButton.addEventListener("click", saveHumanExportFile);
   els.saveMachineTextButton.addEventListener("click", saveMachineExportFile);
@@ -2011,13 +2283,8 @@ function initialize() {
     if (isLogNowMode) {
       syncLogNowInput();
     }
-    if (isPlanNowMode) {
-      syncPlanNowInput();
-      return;
-    }
-    els.planDateTimeInput.min = localDateTimeValue(new Date());
   }, 1000);
-  setView("calendars");
+  setView("goal");
 }
 
 initialize();

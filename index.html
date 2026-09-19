@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Uncharted Calendar</title>
-  <link rel="stylesheet" href="./styles.css?v=20260917-2220">
+  <link rel="stylesheet" href="./styles.css?v=20260919-0013">
 </head>
 <body>
   <main class="app-shell">
@@ -36,6 +36,13 @@
     </section>
 
     <section class="tab-panel">
+      <section id="goalView" class="view-content" hidden>
+        <div id="goalList" class="goal-panel-list"></div>
+        <div class="panel-action goal-frame-action">
+          <button id="addGoalFrameButton" class="ghost-button detail-link-button" type="button">枠を追加</button>
+        </div>
+      </section>
+
       <section id="calendarsView" class="view-content">
         <section class="panel calendar-scope-panel record-scope-panel" aria-label="記録分類">
           <button id="recordLogScopeButton" class="ghost-button scope-button" type="button">ログ</button>
@@ -61,17 +68,28 @@
             <input id="logDateTimeInput" class="datetime-input plan-start-input" type="datetime-local">
             <button id="setLogNowButton" class="ghost-button inline-time-button" type="button">現在</button>
           </div>
-          <label id="planDateTimeLabel" class="visually-hidden" for="planDateTimeInput">開始時刻</label>
-          <input id="planDateTimeInput" type="hidden">
-          <button id="setPlanNowButton" type="button" hidden>現在</button>
         </section>
 
         <section class="panel input-panel record-form-panel record-log-panel">
           <div class="panel-heading">
             <h2 id="logSectionHeading">ログ</h2>
           </div>
-          <label id="logInputLabel" class="input-label" for="activityInput">ログ</label>
-          <textarea id="activityInput" class="activity-input record-textarea" maxlength="280" autocomplete="off"></textarea>
+          <div class="plan-compose-grid">
+            <div class="plan-main-field">
+              <label id="logInputLabel" class="input-label" for="activityInput">行動記録</label>
+              <textarea id="activityInput" class="activity-input record-textarea" maxlength="280" autocomplete="off"></textarea>
+            </div>
+            <div class="pros-cons-grid">
+              <div>
+                <label id="logCostLabel" class="input-label" for="logCostInput">負担</label>
+                <input id="logCostInput" class="activity-input" maxlength="120" type="text" autocomplete="off">
+              </div>
+              <div>
+                <label id="logBenefitLabel" class="input-label" for="logBenefitInput">利益</label>
+                <input id="logBenefitInput" class="activity-input" maxlength="120" type="text" autocomplete="off">
+              </div>
+            </div>
+          </div>
           <button id="saveLogButton" class="primary-button centered-action" type="button">記録する</button>
         </section>
 
@@ -101,7 +119,7 @@
         <div id="globalMemoInputPanel" class="memo-compose-stack record-form-panel record-memo-panel">
           <section class="memo-compose-section">
             <h2 id="globalMemoSectionHeading" class="section-subheading">メモ</h2>
-            <label id="globalMemoInputLabel" class="input-label" for="globalMemoInput">メモしたいこと</label>
+            <label id="globalMemoInputLabel" class="input-label" for="globalMemoInput">内容</label>
             <textarea id="globalMemoInput" class="memo-textarea" maxlength="2000"></textarea>
             <button id="saveGlobalMemoButton" class="primary-button centered-action" type="button">メモを保存</button>
           </section>
@@ -156,6 +174,7 @@
               <button id="exportScopeLogButton" class="ghost-button export-mode-button" type="button">ログ</button>
               <button id="exportScopePlanButton" class="ghost-button export-mode-button" type="button">プラン</button>
               <button id="exportScopeMemoButton" class="ghost-button export-mode-button" type="button">メモ</button>
+              <button id="exportScopeGoalButton" class="ghost-button export-mode-button" type="button">目標</button>
             </div>
           </section>
 
@@ -229,6 +248,7 @@
     </section>
 
     <nav id="bottomNav" class="bottom-nav" role="tablist" aria-label="主要タブ">
+      <button id="goalTabButton" class="tab-button" type="button" role="tab" aria-selected="false">目標</button>
       <button id="primaryTabButton" class="tab-button" type="button" role="tab" aria-selected="false">記録</button>
       <button id="calendarTabButton" class="tab-button" type="button" role="tab" aria-selected="false">履歴</button>
       <button id="textTabButton" class="tab-button" type="button" role="tab" aria-selected="false">エクスポート</button>
@@ -266,6 +286,6 @@
   </div>
   <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-  <script src="./app.js?v=20260917-2220"></script>
+  <script src="./app.js?v=20260919-0015"></script>
 </body>
 </html>

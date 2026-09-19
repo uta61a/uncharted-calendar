@@ -601,15 +601,59 @@ body.theme-memo .day-button.is-selected {
   font-size: 0.82rem;
 }
 
-.entries-list {
+.entries-list,
+.goal-panel-list {
   display: grid;
   gap: 12px;
+}
+
+.goal-frame-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.goal-lines {
+  display: grid;
+  gap: 8px;
+}
+
+.goal-line {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+
+.goal-line:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.goal-input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 36px 0 0;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  line-height: 1.4;
+  outline: none;
+  font-weight: 700;
+}
+
+.goal-inner-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
 }
 
 .panel-action {
   display: flex;
   justify-content: center;
   margin-top: 14px;
+}
+
+.goal-frame-action {
+  margin-bottom: 18px;
 }
 
 .detail-link-button {
@@ -695,6 +739,10 @@ body.theme-memo .day-button.is-selected {
   background: #fff;
   color: var(--accent-deep);
   font-weight: 900;
+}
+
+.goal-line .entry-delete {
+  top: 5px;
 }
 
 .export-mode-switch {
