@@ -1,47 +1,271 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>入試カウント</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <main id="setup" class="setup">
-      <form id="date-form" class="date-form">
-        <label for="exam-date">入試日</label>
-        <div class="date-input">
-          <input id="exam-date" type="date" required />
-          <button id="calendar-button" class="calendar-button" type="button" aria-label="カレンダー"></button>
-        </div>
-        <button type="submit">設定</button>
-      </form>
-    </main>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uncharted Calendar</title>
+  <link rel="stylesheet" href="./styles.css?v=20260917-2220">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="title-panel">
+      <button id="drawerButton" class="drawer-button" type="button" aria-label="メニューを開く" aria-expanded="false">
+        <span aria-hidden="true">≡</span>
+      </button>
+      <div class="title-bar">
+        <h1 id="appTitle">UNCHARTED CALENDAR</h1>
+      </div>
+      <button id="settingsIconButton" class="icon-button" type="button" aria-label="設定">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7Z"></path>
+          <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.36a1.7 1.7 0 0 0-1 .3 1.7 1.7 0 0 0-.8 1.45V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-.8-1.45 1.7 1.7 0 0 0-1-.3 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 3.04 15a1.7 1.7 0 0 0-1.45-.8H1.5a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.45-.8 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 7.4 4.34a1.7 1.7 0 0 0 1-.3 1.7 1.7 0 0 0 .8-1.45V2.5a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 .8 1.45 1.7 1.7 0 0 0 1 .3 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.36 9c.1.34.28.66.52.93.32.36.79.57 1.27.57h.35a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.45.8 1.7 1.7 0 0 0-.56.7Z"></path>
+        </svg>
+      </button>
+    </header>
 
-    <main id="home" class="home hidden">
-      <div class="glow"></div>
-      <section class="countdown">
-        <p class="title">受験まで</p>
-        <output id="days" class="days">0</output>
-        <p class="day-label">日</p>
-        <div class="time-row">
-          <time class="time-box">
-            <span id="hours">0</span>
-            <span>時間</span>
-          </time>
-          <time class="time-box">
-            <span id="minutes">0</span>
-            <span>分</span>
-          </time>
-          <time class="time-box live">
-            <span id="seconds">0</span>
-            <span>秒</span>
-          </time>
+    <section id="heroSection" class="hero">
+      <div class="clock-card" aria-label="この端末の現在日時">
+        <div class="clock-main">
+          <span id="currentHourMinute" class="clock-main-time">--:--</span>
+          <span id="currentSeconds" class="clock-seconds">--</span>
+        </div>
+        <div class="clock-side">
+          <p id="currentMeta" class="clock-meta">---- --/-- Local</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel">
+      <section id="calendarsView" class="view-content">
+        <section class="panel calendar-scope-panel record-scope-panel" aria-label="記録分類">
+          <button id="recordLogScopeButton" class="ghost-button scope-button" type="button">ログ</button>
+          <button id="recordPlanScopeButton" class="ghost-button scope-button" type="button">プラン</button>
+          <button id="recordMemoScopeButton" class="ghost-button scope-button" type="button">メモ</button>
+        </section>
+
+        <section class="panel calendar-panel record-calendar-panel">
+          <div class="calendar-header">
+            <h2 id="recordCalendarMonthLabel" class="calendar-inline-title"></h2>
+            <div class="calendar-month-nav">
+              <button id="recordPrevPeriodButton" class="ghost-button month-nav-button" type="button" aria-label="前の期間">‹</button>
+              <button id="recordNextPeriodButton" class="ghost-button month-nav-button" type="button" aria-label="次の期間">›</button>
+            </div>
+          </div>
+          <div id="recordCalendarGrid" class="calendar-months"></div>
+          <button id="recordToggleCalendarButton" class="calendar-toggle-button" type="button" aria-expanded="false">カレンダーを開く</button>
+        </section>
+
+        <section class="panel input-panel shared-time-panel record-time-panel">
+          <label id="logDateTimeLabel" class="input-label" for="logDateTimeInput">日時</label>
+          <div class="datetime-action-row">
+            <input id="logDateTimeInput" class="datetime-input plan-start-input" type="datetime-local">
+            <button id="setLogNowButton" class="ghost-button inline-time-button" type="button">現在</button>
+          </div>
+          <label id="planDateTimeLabel" class="visually-hidden" for="planDateTimeInput">開始時刻</label>
+          <input id="planDateTimeInput" type="hidden">
+          <button id="setPlanNowButton" type="button" hidden>現在</button>
+        </section>
+
+        <section class="panel input-panel record-form-panel record-log-panel">
+          <div class="panel-heading">
+            <h2 id="logSectionHeading">ログ</h2>
+          </div>
+          <label id="logInputLabel" class="input-label" for="activityInput">ログ</label>
+          <textarea id="activityInput" class="activity-input record-textarea" maxlength="280" autocomplete="off"></textarea>
+          <button id="saveLogButton" class="primary-button centered-action" type="button">記録する</button>
+        </section>
+
+        <section class="panel input-panel plan-compose-panel record-form-panel record-plan-panel">
+          <div class="panel-heading">
+            <h2 id="planSectionHeading">プラン</h2>
+          </div>
+          <div class="plan-compose-grid">
+            <div class="plan-main-field">
+              <label id="planInputLabel" class="input-label" for="planTextInput">予定</label>
+              <textarea id="planTextInput" class="activity-input record-textarea" maxlength="280" autocomplete="off"></textarea>
+            </div>
+            <div class="pros-cons-grid">
+              <div>
+                <label id="costLabel" class="input-label" for="costInput">負担</label>
+                <input id="costInput" class="activity-input" maxlength="120" type="text" autocomplete="off">
+              </div>
+              <div>
+                <label id="benefitLabel" class="input-label" for="benefitInput">利益</label>
+                <input id="benefitInput" class="activity-input" maxlength="120" type="text" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <button id="savePlanButton" class="primary-button centered-action" type="button">予定する</button>
+        </section>
+
+        <div id="globalMemoInputPanel" class="memo-compose-stack record-form-panel record-memo-panel">
+          <section class="memo-compose-section">
+            <h2 id="globalMemoSectionHeading" class="section-subheading">メモ</h2>
+            <label id="globalMemoInputLabel" class="input-label" for="globalMemoInput">メモしたいこと</label>
+            <textarea id="globalMemoInput" class="memo-textarea" maxlength="2000"></textarea>
+            <button id="saveGlobalMemoButton" class="primary-button centered-action" type="button">メモを保存</button>
+          </section>
         </div>
       </section>
-      <button id="change" class="change">変更</button>
-    </main>
 
-    <script src="./script.js"></script>
-  </body>
+      <section id="calendarView" class="view-content" hidden>
+        <section class="panel calendar-scope-panel" aria-label="カレンダー分類">
+          <button id="calendarLogScopeButton" class="ghost-button scope-button" type="button">ログ</button>
+          <button id="calendarPlanScopeButton" class="ghost-button scope-button" type="button">プラン</button>
+          <button id="calendarMemoScopeButton" class="ghost-button scope-button" type="button">メモ</button>
+        </section>
+
+        <section class="panel calendar-panel">
+          <div class="calendar-header">
+            <h2 id="calendarMonthLabel" class="calendar-inline-title"></h2>
+            <div class="calendar-month-nav">
+              <button id="prevPeriodButton" class="ghost-button month-nav-button" type="button" aria-label="前の期間">‹</button>
+              <button id="nextPeriodButton" class="ghost-button month-nav-button" type="button" aria-label="次の期間">›</button>
+            </div>
+          </div>
+          <div id="calendarGrid" class="calendar-months"></div>
+          <button id="toggleCalendarButton" class="calendar-toggle-button" type="button" aria-expanded="false">カレンダーを開く</button>
+        </section>
+
+        <section class="panel detail-panel">
+          <div class="panel-heading">
+            <h2 id="selectedDateLabel"></h2>
+          </div>
+          <div id="selectedEntries" class="entries-list"></div>
+        </section>
+      </section>
+
+      <section id="textView" class="view-content" hidden>
+        <div class="export-column export-left-column">
+          <section class="panel calendar-panel export-calendar-panel">
+            <div class="calendar-header">
+              <h2 id="textCalendarMonthLabel" class="calendar-inline-title"></h2>
+              <div class="calendar-month-nav">
+                <button id="textPrevPeriodButton" class="ghost-button month-nav-button" type="button" aria-label="前の期間">‹</button>
+                <button id="textNextPeriodButton" class="ghost-button month-nav-button" type="button" aria-label="次の期間">›</button>
+              </div>
+            </div>
+            <div id="textCalendarGrid" class="calendar-months"></div>
+            <button id="textToggleCalendarButton" class="calendar-toggle-button" type="button" aria-expanded="false">カレンダーを開く</button>
+          </section>
+
+          <section class="panel export-panel export-scope-panel">
+            <h2 id="exportScopeHeading" class="section-subheading">分類</h2>
+            <div class="export-mode-switch" role="group" aria-label="エクスポート分類">
+              <button id="exportScopeAllButton" class="ghost-button export-mode-button" type="button">すべて</button>
+              <button id="exportScopeLogButton" class="ghost-button export-mode-button" type="button">ログ</button>
+              <button id="exportScopePlanButton" class="ghost-button export-mode-button" type="button">プラン</button>
+              <button id="exportScopeMemoButton" class="ghost-button export-mode-button" type="button">メモ</button>
+            </div>
+          </section>
+
+          <section class="panel export-panel export-range-panel">
+            <h2 id="exportRangeHeading" class="section-subheading">範囲指定</h2>
+            <div class="export-mode-switch" role="group" aria-label="エクスポート範囲">
+              <button id="exportDayButton" class="ghost-button export-mode-button" type="button">1日</button>
+              <button id="exportWeekButton" class="ghost-button export-mode-button" type="button">1週間</button>
+              <button id="exportMonthButton" class="ghost-button export-mode-button" type="button">1ヶ月</button>
+              <button id="exportAllButton" class="ghost-button export-mode-button is-active" type="button">すべて</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="export-column export-right-column">
+          <section class="panel export-panel export-readable-panel">
+            <h2 id="exportHumanHeading" class="section-subheading">人間用</h2>
+            <textarea id="textExportOutput" class="export-output" readonly aria-label="エクスポートされた記録と予定"></textarea>
+            <div class="export-actions">
+              <button id="copyTextButton" class="primary-button" type="button">コピーする</button>
+              <button id="saveHumanTextButton" class="ghost-button" type="button">ファイルに保存</button>
+            </div>
+          </section>
+
+          <section class="panel export-panel export-machine-panel">
+            <h2 id="exportMachineHeading" class="section-subheading">インポート専用</h2>
+            <div class="export-actions">
+              <button id="saveMachineTextButton" class="ghost-button" type="button">インポート専用ファイルを保存</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="importView" class="view-content" hidden>
+        <section class="panel export-panel">
+          <div class="panel-heading">
+            <h2 id="importLabel">インポート</h2>
+          </div>
+          <label id="importFileLabel" class="input-label" for="importFileInput">インポート専用ファイル</label>
+          <input id="importFileInput" class="file-input" type="file" accept=".json,application/json">
+          <div class="export-actions">
+            <button id="importDataButton" class="primary-button" type="button">インポートする</button>
+          </div>
+        </section>
+      </section>
+
+      <section id="settingsView" class="view-content" hidden>
+        <div class="settings-stack">
+          <section class="settings-card">
+            <p id="themeColorLabel" class="input-label">背景色</p>
+            <div class="theme-color-row">
+              <label class="theme-color-option theme-color-option-single" for="themeColorInput">
+                <span id="themeColorNameLabel">テーマ色</span>
+                <input id="themeColorInput" class="theme-color-input" type="color" value="#7b659e">
+              </label>
+            </div>
+          </section>
+          <section class="settings-card">
+            <p id="languageLabel" class="input-label">言語</p>
+            <div class="language-switch" role="group" aria-labelledby="languageLabel">
+              <button id="languageJaButton" class="ghost-button language-button is-active" type="button">日本語</button>
+              <button id="languageEnButton" class="ghost-button language-button" type="button">English</button>
+            </div>
+          </section>
+          <section class="settings-card danger-zone">
+            <p id="resetDataLabel" class="input-label">内部情報のリセット</p>
+            <button id="resetDataButton" class="danger-button" type="button">初期化する</button>
+          </section>
+        </div>
+      </section>
+    </section>
+
+    <nav id="bottomNav" class="bottom-nav" role="tablist" aria-label="主要タブ">
+      <button id="primaryTabButton" class="tab-button" type="button" role="tab" aria-selected="false">記録</button>
+      <button id="calendarTabButton" class="tab-button" type="button" role="tab" aria-selected="false">履歴</button>
+      <button id="textTabButton" class="tab-button" type="button" role="tab" aria-selected="false">エクスポート</button>
+      <button id="exportTabButton" class="tab-button" type="button" role="tab" aria-selected="false">エクスポート</button>
+    </nav>
+  </main>
+
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <p id="drawerMenuLabel">MENU</p>
+      <button id="drawerCloseButton" class="drawer-close" type="button" aria-label="閉じる">×</button>
+    </div>
+    <div class="drawer-content">
+      <nav class="drawer-nav" aria-label="普段使う画面">
+        <button class="drawer-link is-active" type="button" data-drawer-target="calendars">カレンダー</button>
+      </nav>
+      <nav class="drawer-nav drawer-nav-secondary" aria-label="データ管理">
+        <button class="drawer-link" type="button" data-drawer-target="text">エクスポート</button>
+        <button class="drawer-link" type="button" data-drawer-target="import">インポート</button>
+      </nav>
+    </div>
+  </aside>
+  <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
+  <div id="resetDialogBackdrop" class="dialog-backdrop" hidden>
+    <section class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="resetDialogTitle">
+      <h2 id="resetDialogTitle">本当に削除しますか？</h2>
+      <p id="resetDialogMessage">削除する前にエクスポートして外部へ保存することをお勧めします。</p>
+      <label id="resetConfirmLabel" class="input-label" for="resetConfirmInput">delete と入力してください</label>
+      <input id="resetConfirmInput" class="activity-input" type="text" autocomplete="off">
+      <div class="dialog-actions">
+        <button id="cancelResetButton" class="ghost-button" type="button">キャンセル</button>
+        <button id="confirmResetButton" class="danger-button" type="button">削除する</button>
+      </div>
+    </section>
+  </div>
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="./app.js?v=20260917-2220"></script>
+</body>
 </html>
