@@ -2475,6 +2475,14 @@ function finishGoalDrag() {
   document.body.classList.remove("is-goal-reordering");
   if (drag.kind === "frame") {
     const frames = loadGoalFramesRaw();
+    if (!els.goalList.querySelector(".goal-column")) {
+      const ids = Array.from(els.goalList.querySelectorAll(":scope > .goal-frame-panel"))
+        .map((element) => element.dataset.goalFrameId);
+      const frameMap = new Map(frames.map((frame) => [frame.id, frame]));
+      const reordered = ids.map((id) => frameMap.get(id)).filter(Boolean);
+      if (reordered.length === frames.length) saveGoalFrames(reordered);
+      return;
+    }
     const nextOrder = frames.slice();
     ["goal", "memo"].forEach((type) => {
       const column = els.goalList.querySelector(`.goal-column-${type}`);
