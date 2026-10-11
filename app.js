@@ -17,27 +17,51 @@ const WEEKDAYS = {
   en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
 };
 const DEFAULT_THEME_COLOR = "#7b659e";
+const MACHINE_COPY_MAX_CHARS = 4000;
 const I18N = {
   ja: {
-    calendarsTitle: "UNCHARTED CALENDAR",
-    settingsTitle: "設定",
+    calendarsTitle: "Uncharted Calendar",
+    settingsTitle: "Settings",
     menu: "メニュー",
     menuOpen: "メニューを開く",
     settings: "設定",
     calendars: "カレンダー",
     goal: "目標",
     addGoalButton: "目標を追加",
-    addGoalFrameButton: "枠を追加",
+    addGoalFrameButton: "目標枠を追加",
+    addGoalMemoButton: "メモを追加",
     goalPlaceholder: "目標を入力",
+    goalSubtitlePlaceholder: "目標",
+    memoSubtitlePlaceholder: "メモ",
+    goalMemoPlaceholder: "内容を入力",
+    goalDragHandle: "ドラッグして並べ替え",
+    goalEdit: "編集",
+    goalEditDone: "完了",
     goalDeleted: "目標を削除しました。",
     log: "ログ",
     plan: "プラン",
     globalMemo: "メモ",
-    text: "エクスポート",
+    dataManagement: "データ管理",
     import: "インポート",
-    exportTitle: "EXPORT",
-    importTitle: "IMPORT",
-    actionLog: "行動記録",
+    importPreview: "内容を確認",
+    importConfirm: "インポートする",
+    importCancel: "キャンセル",
+    importPreviewTitle: "インポート内容の確認",
+    importIncluded: "取り込む",
+    importDuplicate: "重複・取り込まない",
+    importExcluded: "取り込まない",
+    importInvalid: "内容または日時を確認してください",
+    importCategoryGoal: "目標（目標・メモ）",
+    importCategoryLog: "ログ",
+    importCategoryPlan: "プラン",
+    importCategoryMemo: "メモ",
+    importGoalItem: "目標",
+    importGoalMemoItem: "目標メモ",
+    importTextLabel: "内容",
+    importPreviewEmpty: "このファイルにインポート可能な項目はありません。",
+    importSelectionEmpty: "インポートする項目を選択してください。",
+    exportTitle: "Export",
+    importTitle: "Import",
     record: "記録",
     history: "履歴",
     textExport: "エクスポート",
@@ -46,17 +70,14 @@ const I18N = {
     historyMode: "履歴",
     currentModeEnabled: "現在モードに切り替えました。",
     historyModeEnabled: "履歴モードに切り替えました。",
-    oneDay: "1日",
-    oneWeek: "1週間",
-    oneMonth: "1ヶ月",
-    planTab: "予定",
     logSection: "ログ",
     planSection: "プラン",
     logInputLabel: "行動記録",
     logDateTimeLabel: "日時",
-    planInputLabel: "予定",
+    planInputLabel: "行動記録",
+    starImportance: "重要度",
+    starLevelLabel: "星{level}",
     saveLogButton: "記録する",
-    savePlanButton: "予定する",
     countLabel: "{count}件",
     language: "言語",
     themeColor: "背景色",
@@ -76,25 +97,30 @@ const I18N = {
     resetDataDone: "内部情報を初期化しました。",
     dayEmpty: "この日の項目はまだありません。",
     dayTitle: "{month}月{day}日",
+    markerFilter: "スターで絞り込み",
+    markerFilterAll: "すべて",
+    markerEmpty: "この条件に当てはまる項目はありません。",
+    markerAction: "タップして重要度を変更。現在: 星{level}",
     openCalendar: "カレンダーを開く",
     closeCalendar: "折りたたむ",
     all: "すべて",
+    customRange: "範囲指定",
+    startDate: "開始日",
+    endDate: "終了日",
+    exportMarker: "重要度",
     copy: "コピーする",
     saveHumanText: "ファイルに保存",
-    saveMachineText: "インポート専用ファイルを保存",
-    exportScope: "分類",
+    copyMachineText: "コピーする",
+    machineCopyCount: "文字数: {count} / {limit}",
+    machineCopyLimitReached: "文字数: {count} / {limit}。超過分はファイルに保存してください。",
+    machineCopyTooLarge: "{limit}文字を超えています。ファイルに保存してください。",
     exportRange: "範囲指定",
     exportHuman: "人間用",
     exportMachine: "インポート専用",
     logType: "記録",
     planType: "予定",
     memoType: "メモ",
-    globalMemoInputLabel: "内容",
-    saveGlobalMemoButton: "メモを保存",
-    saveMemoButton: "メモを保存",
-    date: "日付",
-    cost: "負担",
-    benefit: "利益",
+    globalMemoInputLabel: "行動記録",
     deleteConfirm: "本当に削除しますか？",
     logDeleted: "記録を削除しました。",
     planDeleted: "予定を削除しました。",
@@ -114,15 +140,17 @@ const I18N = {
     copied: "テキストをクリップボードにコピーしました。",
     copyFailed: "コピーに失敗しました。手動でコピーしてください。",
     fileSaved: "保存ファイルを作成しました。",
-    importScopeTitle: "インポート",
     invalidImportData: "インポート専用ファイルを選択してください。",
     noImportItems: "この分類でインポートできるデータがありません。",
     importDone: "{count}件をインポートしました。",
-    importFileLabel: "インポート専用ファイル",
-    importFilePrompt: "インポート専用ファイルを選択してください。",
+    importFileLabel: "JSONファイル",
+    importClipboardLabel: "JSONテキスト",
+    importClipboardPlaceholder: "インポート用のテキストを貼り付け",
+    importClipboardPreview: "内容を確認",
+    invalidImportText: "有効なインポート用テキストを貼り付けてください。",
   },
   en: {
-    calendarsTitle: "UNCHARTED CALENDAR",
+    calendarsTitle: "Uncharted Calendar",
     settingsTitle: "Settings",
     menu: "Menu",
     menuOpen: "Open menu",
@@ -130,17 +158,40 @@ const I18N = {
     calendars: "Calendar",
     goal: "Goal",
     addGoalButton: "Add Goal",
-    addGoalFrameButton: "Add Frame",
+    addGoalFrameButton: "Add Goal Frame",
+    addGoalMemoButton: "Add Memo",
     goalPlaceholder: "Enter a goal",
+    goalSubtitlePlaceholder: "Goal",
+    memoSubtitlePlaceholder: "Memo",
+    goalMemoPlaceholder: "Enter memo",
+    goalDragHandle: "Drag to reorder",
+    goalEdit: "Edit",
+    goalEditDone: "Done",
     goalDeleted: "Goal deleted.",
     log: "Log",
     plan: "Plan",
     globalMemo: "Memo",
-    text: "Export",
+    dataManagement: "Data Management",
     import: "Import",
-    exportTitle: "EXPORT",
-    importTitle: "IMPORT",
-    actionLog: "Action Log",
+    importPreview: "Review contents",
+    importConfirm: "Import",
+    importCancel: "Cancel",
+    importPreviewTitle: "Review import contents",
+    importIncluded: "Will import",
+    importDuplicate: "Duplicate - skipped",
+    importExcluded: "Skip import",
+    importInvalid: "Check content, date, or time",
+    importCategoryGoal: "Goals (goals and memos)",
+    importCategoryLog: "Logs",
+    importCategoryPlan: "Plans",
+    importCategoryMemo: "Memos",
+    importGoalItem: "Goal",
+    importGoalMemoItem: "Goal memo",
+    importTextLabel: "Content",
+    importPreviewEmpty: "There are no importable items in this file.",
+    importSelectionEmpty: "Select at least one item to import.",
+    exportTitle: "Export",
+    importTitle: "Import",
     record: "Log",
     history: "History",
     textExport: "Export",
@@ -149,17 +200,14 @@ const I18N = {
     historyMode: "History",
     currentModeEnabled: "Switched to now mode.",
     historyModeEnabled: "Switched to history mode.",
-    oneDay: "1 Day",
-    oneWeek: "1 Week",
-    oneMonth: "1 Month",
-    planTab: "Plan",
     logSection: "Log",
     planSection: "Plan",
     logInputLabel: "Action Log",
     logDateTimeLabel: "Date and time",
-    planInputLabel: "Plan",
-    saveLogButton: "Save Log",
-    savePlanButton: "Save Plan",
+    planInputLabel: "Action Log",
+    starImportance: "Importance",
+    starLevelLabel: "{level} star(s)",
+    saveLogButton: "Record",
     countLabel: "{count} item",
     language: "Language",
     themeColor: "Background Color",
@@ -179,25 +227,30 @@ const I18N = {
     resetDataDone: "Internal data has been reset.",
     dayEmpty: "No plans, logs, or memos for this day yet.",
     dayTitle: "{month}/{day}",
+    markerFilter: "Filter by stars",
+    markerFilterAll: "All",
+    markerEmpty: "No items match this filter.",
+    markerAction: "Tap to change importance. Current: {level} star(s)",
     openCalendar: "Open calendar",
     closeCalendar: "Collapse",
     all: "All",
+    customRange: "Custom range",
+    startDate: "Start date",
+    endDate: "End date",
+    exportMarker: "Importance",
     copy: "Copy",
     saveHumanText: "Save File",
-    saveMachineText: "Save Import-Only File",
-    exportScope: "Category",
+    copyMachineText: "Copy",
+    machineCopyCount: "Characters: {count} / {limit}",
+    machineCopyLimitReached: "Characters: {count} / {limit}. Save larger data as a file.",
+    machineCopyTooLarge: "Over {limit} characters. Save the data as a file instead.",
     exportRange: "Range",
     exportHuman: "Readable",
     exportMachine: "Import-Only",
     logType: "Log",
     planType: "Plan",
     memoType: "Memo",
-    globalMemoInputLabel: "Content",
-    saveGlobalMemoButton: "Save Memo",
-    saveMemoButton: "Save Memo",
-    date: "Date",
-    cost: "Cost",
-    benefit: "Benefit",
+    globalMemoInputLabel: "Action Log",
     deleteConfirm: "Are you sure you want to delete this?",
     logDeleted: "Log deleted.",
     planDeleted: "Plan deleted.",
@@ -217,12 +270,14 @@ const I18N = {
     copied: "Copied to clipboard.",
     copyFailed: "Copy failed. Please copy it manually.",
     fileSaved: "Save file created.",
-    importScopeTitle: "Import",
     invalidImportData: "Please choose an import-only file.",
     noImportItems: "There are no items to import for this category.",
     importDone: "Imported {count} items.",
-    importFileLabel: "Import-Only File",
-    importFilePrompt: "Please choose an import-only file.",
+    importFileLabel: "JSON File",
+    importClipboardLabel: "JSON Text",
+    importClipboardPlaceholder: "Paste import text here",
+    importClipboardPreview: "Review contents",
+    invalidImportText: "Please paste valid import text.",
   },
 };
 
@@ -239,9 +294,13 @@ const els = {
   currentSeconds: document.getElementById("currentSeconds"),
   currentMeta: document.getElementById("currentMeta"),
   heroSection: document.getElementById("heroSection"),
+  goalEditToolbar: document.getElementById("goalEditToolbar"),
+  goalEditModeButton: document.getElementById("goalEditModeButton"),
+  goalFrameActions: document.getElementById("goalFrameActions"),
   goalView: document.getElementById("goalView"),
   goalList: document.getElementById("goalList"),
   addGoalFrameButton: document.getElementById("addGoalFrameButton"),
+  addGoalMemoButton: document.getElementById("addGoalMemoButton"),
   calendarsView: document.getElementById("calendarsView"),
   recordLogScopeButton: document.getElementById("recordLogScopeButton"),
   recordPlanScopeButton: document.getElementById("recordPlanScopeButton"),
@@ -261,19 +320,14 @@ const els = {
   logPanel: document.querySelector(".record-log-panel"),
   logDateTimeLabel: document.getElementById("logDateTimeLabel"),
   logInputLabel: document.getElementById("logInputLabel"),
-  logCostInput: document.getElementById("logCostInput"),
-  logBenefitInput: document.getElementById("logBenefitInput"),
-  logCostLabel: document.getElementById("logCostLabel"),
-  logBenefitLabel: document.getElementById("logBenefitLabel"),
+  logStarRating: document.getElementById("logStarRating"),
   planTextInput: document.getElementById("planTextInput"),
-  costInput: document.getElementById("costInput"),
-  benefitInput: document.getElementById("benefitInput"),
+  planStarRating: document.getElementById("planStarRating"),
+  memoStarRating: document.getElementById("memoStarRating"),
   savePlanButton: document.getElementById("savePlanButton"),
   planSectionHeading: document.getElementById("planSectionHeading"),
   planPanel: document.querySelector(".record-plan-panel"),
   planInputLabel: document.getElementById("planInputLabel"),
-  costLabel: document.getElementById("costLabel"),
-  benefitLabel: document.getElementById("benefitLabel"),
   globalMemoInput: document.getElementById("globalMemoInput"),
   globalMemoInputPanel: document.getElementById("globalMemoInputPanel"),
   saveGlobalMemoButton: document.getElementById("saveGlobalMemoButton"),
@@ -286,15 +340,11 @@ const els = {
   recordToggleCalendarButton: document.getElementById("recordToggleCalendarButton"),
   calendarMonthLabel: document.getElementById("calendarMonthLabel"),
   calendarGrid: document.getElementById("calendarGrid"),
-  textCalendarMonthLabel: document.getElementById("textCalendarMonthLabel"),
-  textCalendarGrid: document.getElementById("textCalendarGrid"),
   prevPeriodButton: document.getElementById("prevPeriodButton"),
   nextPeriodButton: document.getElementById("nextPeriodButton"),
   toggleCalendarButton: document.getElementById("toggleCalendarButton"),
-  textPrevPeriodButton: document.getElementById("textPrevPeriodButton"),
-  textNextPeriodButton: document.getElementById("textNextPeriodButton"),
-  textToggleCalendarButton: document.getElementById("textToggleCalendarButton"),
   selectedDateLabel: document.getElementById("selectedDateLabel"),
+  markerFilterGroup: document.getElementById("markerFilterGroup"),
   selectedEntries: document.getElementById("selectedEntries"),
   bottomNav: document.getElementById("bottomNav"),
   goalTabButton: document.getElementById("goalTabButton"),
@@ -303,33 +353,39 @@ const els = {
   textTabButton: document.getElementById("textTabButton"),
   exportTabButton: document.getElementById("exportTabButton"),
   textExportOutput: document.getElementById("textExportOutput"),
-  exportScopeHeading: document.getElementById("exportScopeHeading"),
-  exportScopeAllButton: document.getElementById("exportScopeAllButton"),
-  exportScopeLogButton: document.getElementById("exportScopeLogButton"),
-  exportScopePlanButton: document.getElementById("exportScopePlanButton"),
-  exportScopeMemoButton: document.getElementById("exportScopeMemoButton"),
-  exportScopeGoalButton: document.getElementById("exportScopeGoalButton"),
-  exportDayButton: document.getElementById("exportDayButton"),
-  exportWeekButton: document.getElementById("exportWeekButton"),
-  exportMonthButton: document.getElementById("exportMonthButton"),
-  exportAllButton: document.getElementById("exportAllButton"),
+  exportRangeSelect: document.getElementById("exportRangeSelect"),
+  exportDateRange: document.getElementById("exportDateRange"),
+  exportStartDateInput: document.getElementById("exportStartDateInput"),
+  exportEndDateInput: document.getElementById("exportEndDateInput"),
+  exportMarkerHeading: document.getElementById("exportMarkerHeading"),
+  exportMarkerSelect: document.getElementById("exportMarkerSelect"),
   copyTextButton: document.getElementById("copyTextButton"),
   saveHumanTextButton: document.getElementById("saveHumanTextButton"),
   saveMachineTextButton: document.getElementById("saveMachineTextButton"),
+  copyMachineTextButton: document.getElementById("copyMachineTextButton"),
+  machineCopyInfo: document.getElementById("machineCopyInfo"),
   exportRangeHeading: document.getElementById("exportRangeHeading"),
+  exportStartDateLabel: document.getElementById("exportStartDateLabel"),
+  exportEndDateLabel: document.getElementById("exportEndDateLabel"),
   exportHumanHeading: document.getElementById("exportHumanHeading"),
   exportMachineHeading: document.getElementById("exportMachineHeading"),
-  importLabel: document.getElementById("importLabel"),
   importFileLabel: document.getElementById("importFileLabel"),
   importFileInput: document.getElementById("importFileInput"),
   importDataButton: document.getElementById("importDataButton"),
+  importClipboardLabel: document.getElementById("importClipboardLabel"),
+  importClipboardInput: document.getElementById("importClipboardInput"),
+  importClipboardButton: document.getElementById("importClipboardButton"),
+  importPreviewPanel: document.getElementById("importPreviewPanel"),
+  importPreviewTitle: document.getElementById("importPreviewTitle"),
+  importPreviewList: document.getElementById("importPreviewList"),
+  confirmImportButton: document.getElementById("confirmImportButton"),
+  cancelImportButton: document.getElementById("cancelImportButton"),
   toastContainer: document.getElementById("toastContainer"),
   themeColorLabel: document.getElementById("themeColorLabel"),
   themeColorNameLabel: document.getElementById("themeColorNameLabel"),
   themeColorInput: document.getElementById("themeColorInput"),
   languageLabel: document.getElementById("languageLabel"),
-  languageJaButton: document.getElementById("languageJaButton"),
-  languageEnButton: document.getElementById("languageEnButton"),
+  languageSelect: document.getElementById("languageSelect"),
   resetDataLabel: document.getElementById("resetDataLabel"),
   resetDataButton: document.getElementById("resetDataButton"),
   resetDialogBackdrop: document.getElementById("resetDialogBackdrop"),
@@ -344,18 +400,28 @@ const els = {
 let now = new Date();
 let selectedDateKey = dateKeyFromDate(now);
 let visibleMonthKey = monthKeyFromDate(now);
+let recordDateKey = dateKeyFromDate(now);
+let recordVisibleMonthKey = monthKeyFromDate(now);
 let currentView = "goal";
 let currentMode = "log";
 let calendarScope = "log";
 let recordScope = "log";
 let isCalendarExpanded = false;
+let isRecordCalendarExpanded = false;
 let textExportMode = "all";
-let textScope = "all";
+let exportStartDateKey = selectedDateKey;
+let exportEndDateKey = selectedDateKey;
+let exportMarkerLevel = 0;
+let pendingImport = null;
 let isLogNowMode = false;
+let markerFilterLevel = 0;
+let recordStarLevel = 1;
 let focusGoalId = "";
+let focusGoalMemoFrameId = "";
+let activeGoalDrag = null;
+let isGoalEditMode = false;
 let language = loadLanguage();
 let themeColor = loadThemeColor();
-let lastThemeMode = "plan";
 const activeToasts = new Map();
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -553,6 +619,9 @@ function ensureGoalFrames() {
     if (!goals.length) return [];
     frames = [{
       id: crypto.randomUUID(),
+      type: "goal",
+      subtitle: "",
+      memoText: "",
       createdAt: nowIso,
       updatedAt: nowIso,
     }];
@@ -561,7 +630,32 @@ function ensureGoalFrames() {
     saveGoals(goals);
     return frames;
   }
-  const fallbackFrameId = frames[0].id;
+  const normalizedFrames = frames.map((frame) => ({
+    ...frame,
+    type: frame.type === "memo" ? "memo" : "goal",
+    subtitle: typeof frame.subtitle === "string" ? frame.subtitle : "",
+    memoText: typeof frame.memoText === "string" ? frame.memoText : "",
+  }));
+  if (normalizedFrames.some((frame, index) => frame.type !== frames[index].type
+      || frame.subtitle !== frames[index].subtitle
+      || frame.memoText !== frames[index].memoText)) {
+    frames = normalizedFrames;
+    saveGoalFrames(frames);
+  }
+  let fallbackFrame = frames.find((frame) => frame.type !== "memo");
+  if (!fallbackFrame && goals.some((goal) => !goal.frameId)) {
+    fallbackFrame = {
+      id: crypto.randomUUID(),
+      type: "goal",
+      subtitle: "",
+      memoText: "",
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    };
+    frames = [...frames, fallbackFrame];
+    saveGoalFrames(frames);
+  }
+  const fallbackFrameId = fallbackFrame?.id || frames[0].id;
   let didMigrate = false;
   goals = goals.map((goal) => {
     if (goal.frameId) return goal;
@@ -576,7 +670,7 @@ function pruneEmptyGoalFrames() {
   const frames = ensureGoalFrames();
   const goals = loadGoals();
   const usedFrameIds = new Set(goals.map((goal) => goal.frameId).filter(Boolean));
-  const nextFrames = frames.filter((frame) => usedFrameIds.has(frame.id));
+  const nextFrames = frames.filter((frame) => frame.type === "memo" || usedFrameIds.has(frame.id));
   if (nextFrames.length !== frames.length) saveGoalFrames(nextFrames);
   return nextFrames;
 }
@@ -603,6 +697,48 @@ function loadGlobalMemos() {
 
 function saveGlobalMemos(memos) {
   writeStorage(KEYS.globalMemos, memos);
+}
+
+function normalizeMarkerLevel(level) {
+  const value = Number(level);
+  return Number.isInteger(value) && value >= 1 && value <= 3 ? value : 1;
+}
+
+function markerStars(item) {
+  return "★".repeat(normalizeMarkerLevel(item.markerLevel));
+}
+
+function ensureEntryMarkerDefaults() {
+  [
+    [loadLogs, saveLogs],
+    [loadPlans, savePlans],
+    [loadGlobalMemos, saveGlobalMemos],
+  ].forEach(([loadItems, saveItems]) => {
+    let changed = false;
+    const items = loadItems().map((item) => {
+      const level = Number(item.markerLevel);
+      if (Number.isInteger(level) && level >= 1 && level <= 3) return item;
+      changed = true;
+      return { ...item, markerLevel: 1 };
+    });
+    if (changed) saveItems(items);
+  });
+}
+
+function updateEntryMarker(type, id) {
+  const storage = {
+    log: [loadLogs, saveLogs],
+    plan: [loadPlans, savePlans],
+    memo: [loadGlobalMemos, saveGlobalMemos],
+  }[type];
+  if (!storage) return;
+  const [loadItems, saveItems] = storage;
+  const items = loadItems();
+  const item = items.find((entry) => entry.id === id);
+  if (!item) return;
+  item.markerLevel = normalizeMarkerLevel(item.markerLevel) % 3 + 1;
+  saveItems(items);
+  renderSelectedEntries();
 }
 
 function memoDateKey(memo) {
@@ -731,13 +867,6 @@ function countItems(dateKey, logMap, planMap, memoMap) {
   return memoMap[dateKey]?.length || 0;
 }
 
-function countTextItems(dateKey, logMap, planMap, memoMap) {
-  if (textScope === "log") return logMap[dateKey]?.length || 0;
-  if (textScope === "plan") return planMap[dateKey]?.length || 0;
-  if (textScope === "memo") return memoMap[dateKey]?.length || 0;
-  return (logMap[dateKey]?.length || 0) + (planMap[dateKey]?.length || 0) + (memoMap[dateKey]?.length || 0);
-}
-
 function getMemoMapForScope(scope = currentMode) {
   return scope === "memo" ? getAllMemoMap() : {};
 }
@@ -783,35 +912,14 @@ function buildMonthCells(year, month, logMap, planMap, memoMap, includeAdjacentM
   return cells;
 }
 
-function buildTextCalendarCells(year, month, logMap, planMap, memoMap) {
-  const monthOnlyCells = buildMonthCells(year, month, logMap, planMap, memoMap, false, countTextItems);
-  const fullCells = buildMonthCells(year, month, logMap, planMap, memoMap, true, countTextItems);
-  if (!isCalendarExpanded) return fullCells;
-  if (textExportMode !== "week") return monthOnlyCells;
-
-  const selectedDate = dateFromKey(selectedDateKey);
-  const weekStart = addDays(selectedDate, -selectedDate.getDay());
-  const weekKeys = new Set(dateKeysBetween(weekStart, addDays(weekStart, 6)));
-  const selectedWeekCrossesMonth = fullCells.some((cell) => (
-    cell.type === "day" && cell.isOutsideMonth && weekKeys.has(cell.dateKey)
-  ));
-  if (!selectedWeekCrossesMonth) return monthOnlyCells;
-
-  return fullCells.map((cell) => {
-    if (cell.type !== "day") return cell;
-    if (!cell.isOutsideMonth || weekKeys.has(cell.dateKey)) return cell;
-    return { type: "placeholder" };
-  });
-}
-
-function getVisibleMonth() {
+function getVisibleMonth(monthKey = visibleMonthKey) {
   const range = getMonthRange();
-  return range.find((month) => month.key === visibleMonthKey) || range[0];
+  return range.find((month) => month.key === monthKey) || range[0];
 }
 
-function getSelectedWeekCells(cells, month) {
-  const selectedParts = parseDateKey(selectedDateKey);
-  const selectedIndex = cells.findIndex((cell) => cell.type === "day" && cell.dateKey === selectedDateKey);
+function getSelectedWeekCells(cells, month, activeDateKey = selectedDateKey) {
+  const selectedParts = parseDateKey(activeDateKey);
+  const selectedIndex = cells.findIndex((cell) => cell.type === "day" && cell.dateKey === activeDateKey);
   if (selectedParts.year !== month.year || selectedParts.month !== month.month || selectedIndex < 0) {
     return cells.slice(0, 7);
   }
@@ -829,6 +937,7 @@ function renderWeekdays(container) {
 
 function renderCalendarCells(container, cells, options = {}) {
   const isSelectionDisabled = options.disableSelection === true;
+  const activeDateKey = options.selectedDateKey || selectedDateKey;
   const grid = document.createElement("div");
   grid.className = "calendar-grid";
   cells.forEach((cell) => {
@@ -840,16 +949,19 @@ function renderCalendarCells(container, cells, options = {}) {
     }
     const button = document.createElement("button");
     button.type = "button";
-    button.className = `day-button${cell.count ? " has-entry" : ""}${cell.dateKey === selectedDateKey ? " is-selected" : ""}${cell.isOutsideMonth ? " is-outside-month" : ""}${isSelectionDisabled ? " is-selection-disabled" : ""}`;
+    button.className = `day-button${cell.count ? " has-entry" : ""}${cell.dateKey === activeDateKey ? " is-selected" : ""}${cell.isOutsideMonth ? " is-outside-month" : ""}${isSelectionDisabled ? " is-selection-disabled" : ""}`;
     button.disabled = isSelectionDisabled;
     button.innerHTML = `
       <span class="day-number">${cell.day}</span>
       <span class="entry-count">${cell.count ? formatCount(cell.count) : ""}</span>
     `;
     button.addEventListener("click", () => {
-      selectedDateKey = cell.dateKey;
-      visibleMonthKey = cell.dateKey.slice(0, 7);
-      syncSharedDateInputToSelectedDate();
+      if (typeof options.onSelect === "function") {
+        options.onSelect(cell.dateKey);
+      } else {
+        selectedDateKey = cell.dateKey;
+        visibleMonthKey = cell.dateKey.slice(0, 7);
+      }
       renderAll();
     });
     grid.appendChild(button);
@@ -859,48 +971,49 @@ function renderCalendarCells(container, cells, options = {}) {
 
 function renderCalendar() {
   const month = getVisibleMonth();
+  const recordMonth = getVisibleMonth(recordVisibleMonthKey);
   const logMap = logsByDate();
   const planMap = plansByDate();
   const memoMap = getMemoMapForScope(calendarScope);
   const textMemoMap = getAllMemoMap();
-  const textLogMap = textScope === "log" || textScope === "all" ? logMap : {};
-  const textPlanMap = textScope === "plan" || textScope === "all" ? planMap : {};
-  const textScopedMemoMap = textScope === "memo" || textScope === "all" ? textMemoMap : {};
+  const recordCells = buildMonthCells(recordMonth.year, recordMonth.month, logMap, planMap, textMemoMap, !isRecordCalendarExpanded);
   const mainCells = buildMonthCells(month.year, month.month, logMap, planMap, memoMap, !isCalendarExpanded);
-  const textCells = buildTextCalendarCells(month.year, month.month, textLogMap, textPlanMap, textScopedMemoMap);
   const targets = [
-    [els.recordCalendarMonthLabel, els.recordCalendarGrid, els.recordToggleCalendarButton, buildMonthCells(month.year, month.month, logMap, planMap, textMemoMap, !isCalendarExpanded), { disableSelection: isLogNowMode }],
-    [els.calendarMonthLabel, els.calendarGrid, els.toggleCalendarButton, mainCells, {}],
-    [els.textCalendarMonthLabel, els.textCalendarGrid, els.textToggleCalendarButton, textCells, {}],
+    [els.recordCalendarMonthLabel, els.recordCalendarGrid, els.recordToggleCalendarButton, recordCells, recordMonth, isRecordCalendarExpanded, {
+      disableSelection: isLogNowMode,
+      selectedDateKey: recordDateKey,
+      onSelect: (dateKey) => {
+        recordDateKey = dateKey;
+        recordVisibleMonthKey = dateKey.slice(0, 7);
+        syncSharedDateInputToRecordDate();
+      },
+    }],
+    [els.calendarMonthLabel, els.calendarGrid, els.toggleCalendarButton, mainCells, month, isCalendarExpanded, {
+      selectedDateKey,
+      onSelect: (dateKey) => {
+        selectedDateKey = dateKey;
+        visibleMonthKey = dateKey.slice(0, 7);
+      },
+    }],
   ];
 
-  targets.forEach(([labelEl, gridEl, toggleButton, cells, options]) => {
+  targets.forEach(([labelEl, gridEl, toggleButton, cells, targetMonth, isExpanded, options]) => {
     if (!labelEl || !gridEl || !toggleButton) return;
-    const visibleCells = isCalendarExpanded ? cells : getSelectedWeekCells(cells, month);
+    const visibleCells = isExpanded ? cells : getSelectedWeekCells(cells, targetMonth, options.selectedDateKey);
     const section = document.createElement("section");
     section.className = "calendar-month-section";
     gridEl.innerHTML = "";
-    labelEl.textContent = formatMonthLabel(month.year, month.month);
+    labelEl.textContent = formatMonthLabel(targetMonth.year, targetMonth.month);
     renderWeekdays(section);
     renderCalendarCells(section, visibleCells, options);
     gridEl.appendChild(section);
-    toggleButton.textContent = isCalendarExpanded ? t("closeCalendar") : t("openCalendar");
-    toggleButton.setAttribute("aria-expanded", String(isCalendarExpanded));
+    toggleButton.textContent = isExpanded ? t("closeCalendar") : t("openCalendar");
+    toggleButton.setAttribute("aria-expanded", String(isExpanded));
   });
 }
 
 function itemDate(item) {
   return item.isoDateTime || item.createdAt || `${item.dateKey}T${item.time || "00:00"}:00`;
-}
-
-function effortBenefitDetail(item) {
-  const cons = item.cons || item.cost || "";
-  const pros = item.pros || item.benefit || "";
-  const parts = [];
-  if (cons) parts.push(`${t("cost")}: ${cons}`);
-  if (pros) parts.push(`${t("benefit")}: ${pros}`);
-  if (!parts.length && item.reward) parts.push(`${t("cost")}＝${t("benefit")}: ${item.reward}`);
-  return parts.join(" / ");
 }
 
 function memoDisplayTime(memo) {
@@ -914,18 +1027,21 @@ function memoDisplayTime(memo) {
 function renderEntryCard(type, item, options = {}) {
   const showType = options.showType !== false;
   const label = type === "log" ? t("logType") : type === "plan" ? t("planType") : t("memoType");
-  const detail = type === "log" || type === "plan" ? effortBenefitDetail(item) : "";
   const entryTime = type === "memo" ? memoDisplayTime(item) : item.time;
+  const detail = String(item.detail || "");
+  const markerLevel = normalizeMarkerLevel(item.markerLevel);
+  const stars = markerStars(item);
   const dataAttr = type === "log"
     ? `data-log-id="${item.id}"`
     : type === "plan"
       ? `data-plan-id="${item.id}"`
       : `data-global-memo-id="${item.id}"`;
   return `
-    <article class="entry-card ${type}">
+    <article class="entry-card ${type}" data-entry-kind="${type}" data-entry-id="${escapeHtml(String(item.id))}" tabindex="0" aria-label="${t("markerAction", { level: markerLevel || 0 })}">
       ${dataAttr ? `<button class="entry-delete" type="button" ${dataAttr} aria-label="${t("deleteConfirm")}">×</button>` : ""}
       ${showType ? `<span class="entry-type">${label}</span>` : ""}
       ${entryTime ? `<span class="entry-time">${escapeHtml(entryTime)}</span>` : ""}
+      ${stars ? `<span class="entry-marker" aria-label="${t("markerAction", { level: markerLevel })}">${stars}</span>` : ""}
       <p class="entry-text">${escapeHtml(item.text)}</p>
       ${detail ? `<p class="entry-detail">${escapeHtml(detail)}</p>` : ""}
     </article>
@@ -969,23 +1085,20 @@ function allDateKeysForScope(scope) {
 }
 
 function getTextExportDateKeys(scope) {
-  const selectedDate = dateFromKey(selectedDateKey);
-  if (textExportMode === "day") return [selectedDateKey];
-  if (textExportMode === "week") {
-    const start = addDays(selectedDate, -selectedDate.getDay());
-    return dateKeysBetween(start, addDays(start, 6));
-  }
-  if (textExportMode === "month") {
-    return dateKeysBetween(
-      new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
-      new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0),
-    );
+  if (textExportMode === "custom") {
+    if (!isValidDateKey(exportStartDateKey) || !isValidDateKey(exportEndDateKey)
+        || exportStartDateKey > exportEndDateKey) return [];
+    return dateKeysBetween(dateFromKey(exportStartDateKey), dateFromKey(exportEndDateKey));
   }
   return allDateKeysForScope(scope);
 }
 
+function matchesExportMarker(item) {
+  return exportMarkerLevel === 0 || normalizeMarkerLevel(item.markerLevel) === exportMarkerLevel;
+}
+
 function getTextExportItems(dateKey, scope) {
-  if (scope === "all") {
+  if (scope === "all" || scope === "entries") {
     return [
       ...getTextExportItems(dateKey, "log").map((item) => `[${t("log")}] ${item}`),
       ...getTextExportItems(dateKey, "plan").map((item) => `[${t("plan")}] ${item}`),
@@ -994,45 +1107,55 @@ function getTextExportItems(dateKey, scope) {
   }
   if (scope === "log") {
     const logs = loadLogs()
-      .filter((item) => item.dateKey === dateKey)
+      .filter((item) => item.dateKey === dateKey && matchesExportMarker(item))
       .sort((a, b) => itemDate(a).localeCompare(itemDate(b)))
       .map((item) => {
-        const detail = effortBenefitDetail(item);
-        return `${item.time} ${item.text}${detail ? `（${detail}）` : ""}`;
+        const stars = markerStars(item);
+        return `${item.time}${stars ? ` ${stars}` : ""} ${item.text}`;
       });
     return logs;
   }
   if (scope === "plan") {
     const plans = loadPlans()
-      .filter((item) => item.dateKey === dateKey)
+      .filter((item) => item.dateKey === dateKey && matchesExportMarker(item))
       .sort((a, b) => itemDate(a).localeCompare(itemDate(b)))
       .map((item) => {
-        const detail = effortBenefitDetail(item);
-        return `${item.time} ${item.text}${detail ? `（${detail}）` : ""}`;
+        const stars = markerStars(item);
+        return `${item.time}${stars ? ` ${stars}` : ""} ${item.text}`;
       });
     return plans;
   }
   return loadGlobalMemos()
-    .filter((memo) => memoDateKey(memo) === dateKey)
-    .map((memo) => `[${t("memoType")}] ${memo.text}`);
+    .filter((memo) => memoDateKey(memo) === dateKey && matchesExportMarker(memo))
+    .map((memo) => {
+      const time = memoDisplayTime(memo);
+      const stars = markerStars(memo);
+      return `[${t("memoType")}] ${time ? `${time} ` : ""}${stars ? `${stars} ` : ""}${memo.text}`;
+    });
 }
 
 function getHumanGoalExportText() {
   const frames = ensureGoalFrames();
   const goals = loadGoals();
   const sections = frames.map((frame, frameIndex) => {
+    const subtitle = String(frame.subtitle || "").trim();
+    if (frame.type === "memo") {
+      const memoText = String(frame.memoText || "").trim();
+      if (!memoText) return "";
+      return [`${subtitle || t("memoSubtitlePlaceholder")}`, memoText].join("\n");
+    }
     const frameGoals = goals
       .filter((goal) => goal.frameId === frame.id)
       .map((goal) => String(goal.text || "").trim())
       .filter(Boolean);
     if (!frameGoals.length) return "";
-    return [`${t("goal")} ${frameIndex + 1}`, ...frameGoals.map((goal, index) => `${index + 1}. ${goal}`)].join("\n");
+    return [`${subtitle || `${t("goal")} ${frameIndex + 1}`}`, ...frameGoals.map((goal, index) => `${index + 1}. ${goal}`)].join("\n");
   }).filter(Boolean);
   if (!sections.length) return "";
   return [t("goal"), ...sections].join("\n\n");
 }
 
-function getHumanExportText(scope = textScope) {
+function getHumanExportText(scope = "all") {
   if (scope === "goal") return getHumanGoalExportText();
   const dateKeys = getTextExportDateKeys(scope);
   const datedText = dateKeys.map((dateKey) => {
@@ -1044,16 +1167,8 @@ function getHumanExportText(scope = textScope) {
   return [getHumanGoalExportText(), datedText].filter(Boolean).join("\n\n");
 }
 
-function getMachineExportRange() {
-  return {
-    mode: textExportMode,
-    selectedDate: selectedDateKey,
-    dateKeys: textScope === "goal" ? [] : getTextExportDateKeys(textScope),
-  };
-}
-
 function getMachineExportItems(dateKey, scope) {
-  if (scope === "all") {
+  if (scope === "all" || scope === "entries") {
     return [
       ...getMachineExportItems(dateKey, "log"),
       ...getMachineExportItems(dateKey, "plan"),
@@ -1062,73 +1177,61 @@ function getMachineExportItems(dateKey, scope) {
   }
   if (scope === "log") {
     return loadLogs()
-      .filter((item) => item.dateKey === dateKey)
+      .filter((item) => item.dateKey === dateKey && matchesExportMarker(item))
       .sort((a, b) => itemDate(a).localeCompare(itemDate(b)))
       .map((item) => ({
         type: "log",
-        dateKey: item.dateKey,
         time: item.time,
         text: item.text,
-        cost: item.cons || item.cost || "",
-        benefit: item.pros || item.benefit || "",
-        isoDateTime: item.isoDateTime || "",
+        markerLevel: normalizeMarkerLevel(item.markerLevel),
       }));
   }
   if (scope === "plan") {
     return loadPlans()
-      .filter((item) => item.dateKey === dateKey)
+      .filter((item) => item.dateKey === dateKey && matchesExportMarker(item))
       .sort((a, b) => itemDate(a).localeCompare(itemDate(b)))
       .map((item) => ({
         type: "plan",
-        dateKey: item.dateKey,
         time: item.time,
         text: item.text,
-        cost: item.cons || item.cost || "",
-        benefit: item.pros || item.benefit || "",
-        isoDateTime: item.isoDateTime || "",
-        createdAt: item.createdAt || "",
+        markerLevel: normalizeMarkerLevel(item.markerLevel),
       }));
   }
   return loadGlobalMemos()
-    .filter((memo) => memoDateKey(memo) === dateKey)
+    .filter((memo) => memoDateKey(memo) === dateKey && matchesExportMarker(memo))
     .map((memo) => ({
       type: "memo",
-      dateKey: memoDateKey(memo),
       time: memoDisplayTime(memo),
       text: memo.text,
-      isoDateTime: memo.isoDateTime || "",
-      createdAt: memo.createdAt || "",
+      markerLevel: normalizeMarkerLevel(memo.markerLevel),
     }));
 }
 
 function getMachineExportGoals() {
   return loadGoals()
     .map((goal) => ({
-      type: "goal",
       frameId: goal.frameId || "",
       text: String(goal.text || "").trim(),
-      createdAt: goal.createdAt || "",
-      updatedAt: goal.updatedAt || "",
     }))
     .filter((goal) => goal.text);
 }
 
 function getMachineExportData() {
-  const range = getMachineExportRange();
-  const dates = range.dateKeys.map((dateKey) => ({
+  const dateKeys = getTextExportDateKeys("all");
+  const goals = getMachineExportGoals();
+  const goalFrames = ensureGoalFrames()
+    .filter((frame) => (frame.type === "memo" && String(frame.memoText || "").trim())
+      || (frame.type !== "memo" && goals.some((goal) => goal.frameId === frame.id)))
+    .map(({ id, type, subtitle, memoText }) => ({ id, type, subtitle, memoText }));
+  const dates = dateKeys.map((dateKey) => ({
     dateKey,
-    items: getMachineExportItems(dateKey, textScope),
+    items: getMachineExportItems(dateKey, "all"),
   })).filter((group) => group.items.length);
-  const includeGoals = textScope === "all" || textScope === "goal";
   return {
     format: "uncharted-calendar-import",
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    scope: textScope,
-    range: range.mode,
-    selectedDate: range.selectedDate,
-    goalFrames: includeGoals ? ensureGoalFrames() : [],
-    goals: includeGoals ? getMachineExportGoals() : [],
+    version: 2,
+    goalFrames,
+    goals,
     dates,
   };
 }
@@ -1152,7 +1255,9 @@ function isoFromImportDateTime(dateKey, time) {
 function parseImportData(rawText) {
   try {
     const data = JSON.parse(rawText);
-    if (data?.format !== "uncharted-calendar-import" || !Array.isArray(data.dates)) return null;
+    if (data?.format !== "uncharted-calendar-import"
+      || ![1, 2].includes(data.version)
+      || !Array.isArray(data.dates)) return null;
     return data;
   } catch (error) {
     return null;
@@ -1169,7 +1274,9 @@ function getImportItems(data, scope) {
     const groupDateKey = isValidDateKey(group?.dateKey) ? group.dateKey : "";
     return Array.isArray(group?.items)
       ? group.items
-        .filter((item) => scope === "all" ? ["log", "plan", "memo"].includes(item?.type) : item?.type === scope)
+        .filter((item) => ["all", "entries"].includes(scope)
+          ? ["log", "plan", "memo"].includes(item?.type)
+          : item?.type === scope)
         .map((item) => ({
           ...item,
           dateKey: isValidDateKey(item.dateKey) ? item.dateKey : groupDateKey,
@@ -1180,7 +1287,7 @@ function getImportItems(data, scope) {
 }
 
 function normalizeImportScope(scope) {
-  return ["all", "log", "plan", "memo", "goal"].includes(scope) ? scope : "";
+  return ["all", "entries", "log", "plan", "memo", "goal"].includes(scope) ? scope : "";
 }
 
 function inferImportScope(data) {
@@ -1189,6 +1296,10 @@ function inferImportScope(data) {
   const types = new Set(
     [
       ...(Array.isArray(data?.goals) && data.goals.length ? ["goal"] : []),
+      ...(Array.isArray(data?.goalFrames)
+        && data.goalFrames.some((frame) => frame.type === "memo" && String(frame.memoText || "").trim())
+        ? ["goal"]
+        : []),
       ...data.dates.flatMap((group) => Array.isArray(group?.items)
       ? group.items.map((item) => item?.type).filter(Boolean)
       : []),
@@ -1199,17 +1310,20 @@ function inferImportScope(data) {
 }
 
 function importSignature(item) {
-  if (item.type === "goal") return ["goal", item.text || ""].join("\u0001");
-  if (item.type === "log" || item.type === "plan") {
-    return [
-      item.dateKey,
-      item.time || "",
-      item.text || "",
-      item.cons || item.cost || "",
-      item.pros || item.benefit || "",
-    ].join("\u0001");
+  if (item.type === "goal") {
+    return ["goal", String(item.text || "").replace(/\s+/g, " ").trim()].join("\u0001");
   }
-  return [item.dateKey, item.time || "", item.text || ""].join("\u0001");
+  const dateKey = item.dateKey || memoDateKey(item);
+  const time = item.type === "memo"
+    ? memoDisplayTime(item)
+    : (isValidTime(item.time) ? item.time : "00:00");
+  return [
+    item.type,
+    dateKey,
+    time,
+    normalizeMarkerLevel(item.markerLevel),
+    String(item.text || ""),
+  ].join("\u0001");
 }
 
 function importGoals(items, frames = []) {
@@ -1229,14 +1343,38 @@ function importGoals(items, frames = []) {
   const importedFrameIds = new Set(candidates.map((item) => item.frameId).filter(Boolean));
   const frameIdMap = {};
   const currentFrames = ensureGoalFrames();
+  const currentGoalFrames = currentFrames.filter((frame) => frame.type !== "memo");
   const nextFrames = [...currentFrames];
   const frameSource = Array.isArray(frames) ? frames : [];
-  const needsFallbackFrame = candidates.some((item) => !item.frameId) && !currentFrames.length;
-  let fallbackFrameId = currentFrames[0]?.id || "";
+  const importedFrames = [];
+  const memoFrameSignatures = new Set(currentFrames
+    .filter((frame) => frame.type === "memo")
+    .map((frame) => String(frame.memoText || "").trim()));
+  frameSource.filter((frame) => frame.type === "memo" && String(frame.memoText || "").trim()).forEach((frame) => {
+    const signature = String(frame.memoText || "").trim();
+    if (memoFrameSignatures.has(signature)) return;
+    memoFrameSignatures.add(signature);
+    const nextFrame = {
+      ...frame,
+      id: crypto.randomUUID(),
+      type: "memo",
+      subtitle: String(frame.subtitle || ""),
+      memoText: String(frame.memoText || ""),
+      createdAt: frame.createdAt || new Date().toISOString(),
+      updatedAt: frame.updatedAt || frame.createdAt || new Date().toISOString(),
+    };
+    nextFrames.push(nextFrame);
+    importedFrames.push(nextFrame);
+  });
+  const needsFallbackFrame = candidates.some((item) => !item.frameId) && !currentGoalFrames.length;
+  let fallbackFrameId = currentGoalFrames[0]?.id || "";
   if (needsFallbackFrame) {
     const nowIso = new Date().toISOString();
     const fallbackFrame = {
       id: crypto.randomUUID(),
+      type: "goal",
+      subtitle: "",
+      memoText: "",
       createdAt: nowIso,
       updatedAt: nowIso,
     };
@@ -1246,14 +1384,19 @@ function importGoals(items, frames = []) {
   importedFrameIds.forEach((oldFrameId) => {
     const frame = frameSource.find((item) => item.id === oldFrameId);
     const nextFrame = {
+      ...frame,
       id: crypto.randomUUID(),
+      type: "goal",
+      subtitle: String(frame?.subtitle || ""),
+      memoText: "",
       createdAt: frame?.createdAt || new Date().toISOString(),
       updatedAt: frame?.updatedAt || frame?.createdAt || new Date().toISOString(),
     };
     frameIdMap[oldFrameId] = nextFrame.id;
     nextFrames.push(nextFrame);
+    importedFrames.push(nextFrame);
   });
-  if (Object.keys(frameIdMap).length || needsFallbackFrame) saveGoalFrames(nextFrames);
+  if (nextFrames.length !== currentFrames.length || Object.keys(frameIdMap).length || needsFallbackFrame) saveGoalFrames(nextFrames);
   const imported = [];
   candidates.forEach((item) => {
     const nowIso = new Date().toISOString();
@@ -1267,7 +1410,7 @@ function importGoals(items, frames = []) {
     imported.push(next);
   });
   if (imported.length) saveGoals([...existing, ...imported]);
-  return imported;
+  return [...imported, ...importedFrames];
 }
 
 function importLogs(items) {
@@ -1281,9 +1424,8 @@ function importLogs(items) {
       dateKey: item.dateKey,
       time,
       text: String(item.text),
-      cons: String(item.cost || item.cons || ""),
-      pros: String(item.benefit || item.pros || ""),
       isoDateTime: item.isoDateTime || isoFromImportDateTime(item.dateKey, time),
+      markerLevel: normalizeMarkerLevel(item.markerLevel),
     };
     const signature = importSignature({ ...next, type: "log" });
     if (signatures.has(signature)) return;
@@ -1305,10 +1447,9 @@ function importPlans(items) {
       dateKey: item.dateKey,
       time,
       text: String(item.text),
-      cons: String(item.cost || item.cons || ""),
-      pros: String(item.benefit || item.pros || ""),
       isoDateTime: item.isoDateTime || isoFromImportDateTime(item.dateKey, time),
       createdAt: item.createdAt || new Date().toISOString(),
+      markerLevel: normalizeMarkerLevel(item.markerLevel),
     };
     const signature = importSignature({ ...next, type: "plan" });
     if (signatures.has(signature)) return;
@@ -1331,6 +1472,7 @@ function importMemos(items) {
       text: String(item.text),
       isoDateTime: item.isoDateTime || "",
       createdAt: item.createdAt || `${item.dateKey}T00:00:00.000Z`,
+      markerLevel: normalizeMarkerLevel(item.markerLevel),
     };
     const signature = importSignature({ ...next, type: "memo" });
     if (signatures.has(signature)) return;
@@ -1341,7 +1483,214 @@ function importMemos(items) {
   return imported;
 }
 
-async function importSelectedFile() {
+function getExistingImportSignatures() {
+  return {
+    goal: new Set(loadGoals().map((item) => importSignature({ ...item, type: "goal" }))),
+    goalMemo: new Set(ensureGoalFrames()
+      .filter((frame) => frame.type === "memo")
+      .map((frame) => String(frame.memoText || "").trim())
+      .filter(Boolean)),
+    log: new Set(loadLogs().map((item) => importSignature({ ...item, type: "log" }))),
+    plan: new Set(loadPlans().map((item) => importSignature({ ...item, type: "plan" }))),
+    memo: new Set(loadGlobalMemos().map((item) => importSignature({ ...item, type: "memo" }))),
+  };
+}
+
+function makeImportPreview(data, scope) {
+  const items = getImportItems(data, scope);
+  const previewItems = [];
+  if (scope === "all" || scope === "goal") {
+    items.filter((item) => item.type === "goal").forEach((item) => {
+      previewItems.push({ key: crypto.randomUUID(), kind: "goal", item, excluded: false });
+    });
+    (Array.isArray(data.goalFrames) ? data.goalFrames : [])
+      .filter((frame) => frame.type === "memo" && String(frame.memoText || "").trim())
+      .forEach((frame) => {
+        previewItems.push({
+          key: crypto.randomUUID(),
+          kind: "goalMemo",
+          item: { ...frame, memoText: String(frame.memoText || ""), subtitle: String(frame.subtitle || "") },
+          excluded: false,
+        });
+      });
+  }
+  items.filter((item) => ["log", "plan", "memo"].includes(item.type)).forEach((item) => {
+    previewItems.push({
+      key: crypto.randomUUID(),
+      kind: item.type,
+      item: {
+        ...item,
+        dateKey: item.dateKey,
+        time: isValidTime(item.time) ? item.time : (isValidTime(memoDisplayTime(item)) ? memoDisplayTime(item) : "00:00"),
+        markerLevel: normalizeMarkerLevel(item.markerLevel),
+      },
+      excluded: false,
+    });
+  });
+  return { data, scope, items: previewItems };
+}
+
+function getPreviewSignature(previewItem) {
+  if (previewItem.kind === "goalMemo") return String(previewItem.item.memoText || "").trim();
+  return importSignature({ ...previewItem.item, type: previewItem.kind });
+}
+
+function refreshImportPreviewStatuses() {
+  if (!pendingImport) return;
+  const signatures = getExistingImportSignatures();
+  const seen = Object.fromEntries(Object.keys(signatures).map((key) => [key, new Set(signatures[key])]));
+  pendingImport.items.forEach((previewItem) => {
+    const signature = getPreviewSignature(previewItem);
+    previewItem.duplicate = seen[previewItem.kind].has(signature);
+    previewItem.invalid = previewItem.kind === "goal"
+      ? !String(previewItem.item.text || "").trim()
+      : previewItem.kind === "goalMemo"
+        ? !String(previewItem.item.memoText || "").trim()
+        : (!String(previewItem.item.text || "").trim()
+          || !isValidDateKey(previewItem.item.dateKey)
+          || !isValidTime(previewItem.item.time));
+    if (!previewItem.duplicate && !previewItem.invalid && !previewItem.excluded) seen[previewItem.kind].add(signature);
+    const card = els.importPreviewList.querySelector(`[data-import-key="${previewItem.key}"]`);
+    if (!card) return;
+    const status = card.querySelector(".import-preview-status");
+    const checkbox = card.querySelector("input[type='checkbox']");
+    status.textContent = previewItem.duplicate
+      ? t("importDuplicate")
+      : previewItem.invalid
+        ? t("importInvalid")
+        : previewItem.excluded
+          ? t("importExcluded")
+          : t("importIncluded");
+    status.classList.toggle("is-duplicate", previewItem.duplicate);
+    status.classList.toggle("is-included", !previewItem.duplicate && !previewItem.invalid && !previewItem.excluded);
+    checkbox.checked = !previewItem.duplicate && !previewItem.invalid && !previewItem.excluded;
+    checkbox.disabled = previewItem.duplicate || previewItem.invalid;
+    card.classList.toggle("is-duplicate", previewItem.duplicate);
+    card.classList.toggle("is-excluded", previewItem.excluded && !previewItem.duplicate && !previewItem.invalid);
+  });
+  const selectedCount = pendingImport.items.filter((item) => !item.duplicate && !item.invalid && !item.excluded).length;
+  els.confirmImportButton.disabled = selectedCount === 0;
+}
+
+function renderImportPreview() {
+  const groups = [
+    ["goal", ["goal", "goalMemo"]],
+    ["log", ["log"]],
+    ["plan", ["plan"]],
+    ["memo", ["memo"]],
+  ];
+  els.importPreviewList.replaceChildren();
+  if (!pendingImport || !pendingImport.items.length) {
+    const empty = document.createElement("p");
+    empty.className = "import-preview-empty";
+    empty.textContent = t("importPreviewEmpty");
+    els.importPreviewList.append(empty);
+    els.confirmImportButton.disabled = true;
+    return;
+  }
+  groups.forEach(([category, kinds]) => {
+    const items = pendingImport.items.filter((item) => kinds.includes(item.kind));
+    if (!items.length) return;
+    const section = document.createElement("section");
+    section.className = "import-preview-category";
+    const heading = document.createElement("h4");
+    heading.textContent = t(`importCategory${category[0].toUpperCase()}${category.slice(1)}`);
+    section.append(heading);
+    items.forEach((previewItem) => {
+      const { item, kind, key } = previewItem;
+      const card = document.createElement("article");
+      card.className = "import-preview-item";
+      card.dataset.importKey = key;
+      const top = document.createElement("div");
+      top.className = "import-preview-item-top";
+      const selection = document.createElement("label");
+      selection.className = "import-preview-selection";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = true;
+      checkbox.dataset.importKey = key;
+      const typeLabel = document.createElement("span");
+      typeLabel.textContent = t(kind === "goal" ? "importGoalItem" : kind === "goalMemo" ? "importGoalMemoItem" : kind === "log" ? "log" : kind === "plan" ? "plan" : "globalMemo");
+      selection.append(checkbox, typeLabel);
+      const status = document.createElement("span");
+      status.className = "import-preview-status";
+      top.append(selection, status);
+      card.append(top);
+      if (["log", "plan", "memo"].includes(kind)) {
+        const meta = document.createElement("div");
+        meta.className = "import-preview-meta";
+        const dateTime = document.createElement("span");
+        dateTime.className = "import-preview-datetime";
+        dateTime.textContent = `${formatDateHeader(item.dateKey)} ${item.time}`;
+        const stars = document.createElement("span");
+        stars.className = "import-preview-stars";
+        stars.textContent = "★".repeat(normalizeMarkerLevel(item.markerLevel));
+        meta.append(dateTime, stars);
+        card.append(meta);
+      }
+      if (kind === "goalMemo" && item.subtitle) {
+        const subtitle = document.createElement("p");
+        subtitle.className = "import-preview-subtitle";
+        subtitle.textContent = item.subtitle;
+        card.append(subtitle);
+      }
+      const content = document.createElement("details");
+      content.className = "import-preview-content";
+      const summary = document.createElement("summary");
+      const body = kind === "goalMemo" ? item.memoText : item.text;
+      const summaryLabel = document.createElement("span");
+      summaryLabel.className = "import-preview-summary-label";
+      summaryLabel.textContent = String(body || "").replace(/\s+/g, " ").trim() || t("importTextLabel");
+      summary.title = String(body || "");
+      summary.append(summaryLabel);
+      const fullText = document.createElement("p");
+      fullText.className = "import-preview-full-text";
+      fullText.textContent = String(body || "");
+      content.append(summary, fullText);
+      card.append(content);
+      section.append(card);
+    });
+    els.importPreviewList.append(section);
+  });
+  els.importPreviewList.querySelectorAll("details.import-preview-content").forEach((content) => {
+    const summary = content.querySelector("summary");
+    if (summary.scrollWidth > summary.clientWidth) {
+      content.classList.add("is-expandable");
+      return;
+    }
+    const text = document.createElement("p");
+    text.className = "import-preview-content is-static";
+    text.textContent = summary.textContent;
+    content.replaceWith(text);
+  });
+  refreshImportPreviewStatuses();
+}
+
+function handleImportPreviewInput(event) {
+  const control = event.target;
+  if (!(control instanceof HTMLInputElement) || control.type !== "checkbox") return;
+  const previewItem = pendingImport?.items.find((item) => item.key === control.dataset.importKey);
+  if (!previewItem) return;
+  previewItem.excluded = !control.checked;
+  refreshImportPreviewStatuses();
+}
+
+function showImportPreview(rawText, focusTarget, invalidMessage) {
+  const data = parseImportData(rawText.trim());
+  if (!data) {
+    showToast(t(invalidMessage), "error");
+    focusTarget.focus();
+    return;
+  }
+  const fileScope = inferImportScope(data);
+  pendingImport = makeImportPreview(data, fileScope);
+  els.importPreviewTitle.textContent = t("importPreviewTitle");
+  els.importPreviewPanel.hidden = false;
+  renderImportPreview();
+  els.importPreviewPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function prepareImportPreview() {
   const file = els.importFileInput.files?.[0];
   if (!file) {
     showToast(t("invalidImportData"), "error");
@@ -1349,28 +1698,63 @@ async function importSelectedFile() {
     return;
   }
   const rawText = await file.text();
-  const data = parseImportData(rawText.trim());
-  if (!data) {
-    showToast(t("invalidImportData"), "error");
-    els.importFileInput.focus();
+  showImportPreview(rawText, els.importFileInput, "invalidImportData");
+}
+
+function prepareClipboardImportPreview() {
+  const rawText = els.importClipboardInput.value;
+  if (!rawText.trim()) {
+    showToast(t("invalidImportText"), "error");
+    els.importClipboardInput.focus();
     return;
   }
-  const fileScope = inferImportScope(data);
-  const items = getImportItems(data, fileScope);
-  const imported = fileScope === "all"
+  showImportPreview(rawText, els.importClipboardInput, "invalidImportText");
+}
+
+function cancelImportPreview() {
+  pendingImport = null;
+  els.importFileInput.value = "";
+  els.importClipboardInput.value = "";
+  els.importPreviewPanel.hidden = true;
+  els.importPreviewList.replaceChildren();
+}
+
+function confirmSelectedImport() {
+  if (!pendingImport) return;
+  refreshImportPreviewStatuses();
+  const selected = pendingImport.items.filter((item) => !item.duplicate && !item.invalid && !item.excluded);
+  if (!selected.length) {
+    showToast(t("importSelectionEmpty"), "error");
+    return;
+  }
+  const { data, scope } = pendingImport;
+  const goalItems = selected.filter((entry) => entry.kind === "goal").map((entry) => ({ ...entry.item, type: "goal" }));
+  const datedItems = selected.filter((entry) => ["log", "plan", "memo"].includes(entry.kind))
+    .map((entry) => ({ ...entry.item, type: entry.kind }));
+  const selectedFrames = [
+    ...(Array.isArray(data.goalFrames) ? data.goalFrames.filter((frame) => frame.type !== "memo" && goalItems.some((item) => item.frameId === frame.id)) : []),
+    ...selected.filter((entry) => entry.kind === "goalMemo").map((entry) => ({ ...entry.item, type: "memo" })),
+  ];
+  const imported = scope === "all"
     ? [
-      ...importGoals(items.filter((item) => item.type === "goal"), data.goalFrames),
-      ...importLogs(items.filter((item) => item.type === "log")),
-      ...importPlans(items.filter((item) => item.type === "plan")),
-      ...importMemos(items.filter((item) => item.type === "memo")),
+      ...importGoals(goalItems, selectedFrames),
+      ...importLogs(datedItems.filter((item) => item.type === "log")),
+      ...importPlans(datedItems.filter((item) => item.type === "plan")),
+      ...importMemos(datedItems.filter((item) => item.type === "memo")),
     ]
-    : fileScope === "goal"
-      ? importGoals(items, data.goalFrames)
-      : fileScope === "log"
-        ? importLogs(items)
-        : fileScope === "plan"
-          ? importPlans(items)
-          : importMemos(items);
+      : scope === "goal"
+      ? importGoals(goalItems, selectedFrames)
+      : scope === "log"
+        ? importLogs(datedItems)
+        : scope === "plan"
+          ? importPlans(datedItems)
+          : scope === "entries"
+            ? [
+              ...importLogs(datedItems.filter((item) => item.type === "log")),
+              ...importPlans(datedItems.filter((item) => item.type === "plan")),
+              ...importMemos(datedItems.filter((item) => item.type === "memo")),
+            ]
+            : importMemos(datedItems);
   if (!imported.length) {
     showToast(t("noImportItems"), "error");
     return;
@@ -1380,7 +1764,10 @@ async function importSelectedFile() {
     selectedDateKey = lastDatedImport.dateKey;
     visibleMonthKey = lastDatedImport.dateKey.slice(0, 7);
   }
+  pendingImport = null;
   els.importFileInput.value = "";
+  els.importClipboardInput.value = "";
+  els.importPreviewPanel.hidden = true;
   renderAll();
   showToast(t("importDone", { count: imported.length }));
 }
@@ -1406,6 +1793,10 @@ function bindDeleteButtons(container) {
         pruneEmptyGoalFrames();
         showToast(t("goalDeleted"));
       }
+      if (button.dataset.goalMemoFrameId) {
+        saveGoalFrames(loadGoalFramesRaw().filter((frame) => frame.id !== button.dataset.goalMemoFrameId));
+        showToast(t("memoDeleted"));
+      }
       renderAll();
     });
   });
@@ -1420,33 +1811,70 @@ function renderGoals() {
     map[frameId].push(goal);
     return map;
   }, {});
-  els.goalList.innerHTML = frames.map((frame) => {
+  els.goalFrameActions.hidden = !isGoalEditMode;
+  const frameMarkup = frames.map((frame, frameIndex) => {
     const frameGoals = goalsByFrame[frame.id]?.length
       ? goalsByFrame[frame.id]
       : [];
-    if (!frameGoals.length) return "";
-    return `
-    <section class="panel goal-frame-panel" data-goal-frame-id="${frame.id}">
+    const isMemoFrame = frame.type === "memo";
+    if (!isMemoFrame && !frameGoals.length) return "";
+    if (isMemoFrame && !isGoalEditMode && !String(frame.memoText || "").trim()) return "";
+    const subtitle = String(frame.subtitle || (isMemoFrame ? t("memoSubtitlePlaceholder") : `${t("goal")} ${frameIndex + 1}`));
+    const shownGoals = isGoalEditMode ? frameGoals : frameGoals.filter((goal) => String(goal.text || "").trim());
+    return {
+      type: isMemoFrame ? "memo" : "goal",
+      html: `
+    <section class="panel goal-frame-panel ${isMemoFrame ? "goal-memo-frame" : ""}" data-goal-frame-id="${frame.id}">
       <div class="panel-heading">
-        <h2>${t("goal")}</h2>
+        ${isGoalEditMode ? `<button class="goal-drag-handle" type="button" aria-label="${t("goalDragHandle")}" title="${t("goalDragHandle")}"></button>` : ""}
+        ${isGoalEditMode
+          ? `<input class="goal-frame-subtitle" type="text" maxlength="80" data-goal-frame-subtitle-id="${frame.id}" aria-label="${t("goalSubtitlePlaceholder")}" value="${escapeHtml(subtitle)}">`
+          : `<h2 class="goal-frame-title">${escapeHtml(subtitle)}</h2>`}
+        ${isGoalEditMode && isMemoFrame ? `<button class="entry-delete goal-frame-delete" type="button" data-goal-memo-frame-id="${frame.id}" aria-label="${t("deleteConfirm")}">×</button>` : ""}
       </div>
-      <div class="goal-lines">
-        ${frameGoals.map((goal) => `
-          <div class="goal-line">
-            ${goal.id ? `<button class="entry-delete" type="button" data-goal-id="${goal.id}" aria-label="${t("deleteConfirm")}">×</button>` : ""}
-            <input class="goal-input" maxlength="200" type="text" data-goal-id="${goal.id}" data-goal-frame-id="${frame.id}" placeholder="${t("goalPlaceholder")}" value="${escapeHtml(String(goal.text || "").replace(/\s+/g, " ").trim())}">
+      ${isMemoFrame
+        ? isGoalEditMode
+          ? `<textarea class="memo-textarea goal-memo-input" maxlength="5000" data-goal-memo-text-id="${frame.id}" placeholder="${t("goalMemoPlaceholder")}">${escapeHtml(String(frame.memoText || ""))}</textarea>`
+          : String(frame.memoText || "").trim() ? `<p class="goal-memo-display">${escapeHtml(String(frame.memoText))}</p>` : ""
+        : `<div class="goal-lines">
+            ${shownGoals.map((goal) => `
+              <div class="goal-line" data-goal-line-id="${goal.id}">
+                ${isGoalEditMode ? `<button class="goal-drag-handle" type="button" aria-label="${t("goalDragHandle")}" title="${t("goalDragHandle")}"></button>` : ""}
+                ${isGoalEditMode && goal.id ? `<button class="entry-delete" type="button" data-goal-id="${goal.id}" aria-label="${t("deleteConfirm")}">×</button>` : ""}
+                ${isGoalEditMode
+                  ? `<input class="goal-input" maxlength="200" type="text" data-goal-id="${goal.id}" data-goal-frame-id="${frame.id}" placeholder="${t("goalPlaceholder")}" value="${escapeHtml(String(goal.text || "").replace(/\s+/g, " ").trim())}">`
+                  : `<p class="goal-display">${escapeHtml(String(goal.text || ""))}</p>`}
+              </div>
+            `).join("")}
           </div>
-        `).join("")}
-      </div>
-      <div class="goal-inner-action">
-        <button class="ghost-button detail-link-button add-goal-line-button" type="button" data-goal-frame-id="${frame.id}">${t("addGoalButton")}</button>
-      </div>
+          ${isGoalEditMode ? `<div class="goal-inner-action">
+            <button class="ghost-button detail-link-button add-goal-line-button" type="button" data-goal-frame-id="${frame.id}">${t("addGoalButton")}</button>
+          </div>` : ""}`}
     </section>
-  `;
-  }).filter(Boolean).join("");
+  `,
+    };
+  }).filter(Boolean);
+  const isLandscapeLayout = window.matchMedia("(orientation: landscape)").matches;
+  els.goalList.innerHTML = isLandscapeLayout
+    ? ["goal", "memo"].map((type) => `
+        <div class="goal-column goal-column-${type}">
+          ${frameMarkup.filter((frame) => frame.type === type).map((frame) => frame.html).join("")}
+        </div>
+      `).join("")
+    : frameMarkup.map((frame) => frame.html).join("");
   bindDeleteButtons(els.goalList);
   els.goalList.querySelectorAll(".goal-input").forEach((input) => {
     input.addEventListener("input", updateGoalBox);
+  });
+  els.goalList.querySelectorAll(".goal-frame-subtitle").forEach((input) => {
+    input.addEventListener("input", updateGoalFrameSubtitle);
+  });
+  els.goalList.querySelectorAll(".goal-memo-input").forEach((input) => {
+    input.addEventListener("input", (event) => {
+      updateGoalMemoBox(event);
+      resizeGoalMemo(event.currentTarget);
+    });
+    resizeGoalMemo(input);
   });
   els.goalList.querySelectorAll(".add-goal-line-button").forEach((button) => {
     button.addEventListener("click", () => addGoalLine(button.dataset.goalFrameId));
@@ -1456,16 +1884,42 @@ function renderGoals() {
     if (target) target.focus({ preventScroll: true });
     focusGoalId = "";
   }
+  if (focusGoalMemoFrameId) {
+    const target = els.goalList.querySelector(`[data-goal-memo-text-id="${focusGoalMemoFrameId}"]`);
+    if (target) target.focus({ preventScroll: true });
+    focusGoalMemoFrameId = "";
+  }
 }
 
 function renderSelectedEntries() {
   const { month, day } = parseDateKey(selectedDateKey);
   els.selectedDateLabel.textContent = t("dayTitle", { month, day });
-  const items = getDayItems(selectedDateKey, calendarScope);
+  const allItems = getDayItems(selectedDateKey, calendarScope);
+  const items = markerFilterLevel
+    ? allItems.filter(({ item }) => normalizeMarkerLevel(item.markerLevel) === markerFilterLevel)
+    : allItems;
+  els.markerFilterGroup.setAttribute("aria-label", t("markerFilter"));
+  Array.from(els.markerFilterGroup.options).forEach((option) => {
+    const level = Number(option.value);
+    option.textContent = level === 0 ? t("markerFilterAll") : "★".repeat(level);
+  });
+  els.markerFilterGroup.value = String(markerFilterLevel);
   els.selectedEntries.innerHTML = items.length
     ? items.map(({ type, item }) => renderEntryCard(type, item, { showType: false })).join("")
-    : `<p class="empty-state">${t("dayEmpty")}</p>`;
+    : `<p class="empty-state">${markerFilterLevel ? t("markerEmpty") : t("dayEmpty")}</p>`;
   bindDeleteButtons(els.selectedEntries);
+  els.selectedEntries.querySelectorAll(".entry-card").forEach((card) => {
+    const toggleMarker = () => updateEntryMarker(card.dataset.entryKind, card.dataset.entryId);
+    card.addEventListener("click", (event) => {
+      if (event.target.closest("button")) return;
+      toggleMarker();
+    });
+    card.addEventListener("keydown", (event) => {
+      if (event.target !== card || !["Enter", " "].includes(event.key)) return;
+      event.preventDefault();
+      toggleMarker();
+    });
+  });
 }
 
 function renderCalendarScopeControls() {
@@ -1497,35 +1951,67 @@ function renderRecordScopeControls() {
   els.globalMemoInputPanel.hidden = currentView !== "calendars" || recordScope !== "memo";
 }
 
-function renderTextExport() {
-  const exportScopeButtons = [
-    ["all", els.exportScopeAllButton, t("all")],
-    ["log", els.exportScopeLogButton, t("log")],
-    ["plan", els.exportScopePlanButton, t("plan")],
-    ["memo", els.exportScopeMemoButton, t("globalMemo")],
-    ["goal", els.exportScopeGoalButton, t("goal")],
-  ];
-  exportScopeButtons.forEach(([scope, button, label]) => {
-    button.textContent = label;
-    button.classList.toggle("is-active", textScope === scope);
+function renderStarRatingControls() {
+  [els.logStarRating, els.planStarRating, els.memoStarRating].forEach((container) => {
+    container.setAttribute("aria-label", t("starImportance"));
+    container.querySelector(".star-rating-label").textContent = t("starImportance");
+    container.querySelectorAll("[data-star-level]").forEach((button) => {
+      const level = Number(button.dataset.starLevel);
+      const isActive = level === recordStarLevel;
+      button.textContent = "★".repeat(level);
+      button.setAttribute("aria-label", t("starLevelLabel", { level }));
+      button.setAttribute("aria-pressed", String(isActive));
+      button.classList.toggle("is-active", isActive);
+    });
   });
-  els.exportDayButton.classList.toggle("is-active", textExportMode === "day");
-  els.exportWeekButton.classList.toggle("is-active", textExportMode === "week");
-  els.exportMonthButton.classList.toggle("is-active", textExportMode === "month");
-  els.exportAllButton.classList.toggle("is-active", textExportMode === "all");
+}
+
+function renderTextExport() {
+  els.exportRangeSelect.setAttribute("aria-label", t("exportRange"));
+  els.exportRangeSelect.options[0].textContent = t("all");
+  els.exportRangeSelect.options[1].textContent = t("customRange");
+  els.exportRangeSelect.value = textExportMode;
+  els.exportDateRange.hidden = textExportMode !== "custom";
+  if (els.exportStartDateInput.value !== exportStartDateKey) els.exportStartDateInput.value = exportStartDateKey;
+  if (els.exportEndDateInput.value !== exportEndDateKey) els.exportEndDateInput.value = exportEndDateKey;
+  els.exportMarkerHeading.textContent = t("exportMarker");
+  els.exportMarkerSelect.setAttribute("aria-label", t("exportMarker"));
+  Array.from(els.exportMarkerSelect.options).forEach((option) => {
+    const level = Number(option.value);
+    option.textContent = level ? "★".repeat(level) : t("markerFilterAll");
+  });
+  els.exportMarkerSelect.value = String(exportMarkerLevel);
+  const machineCopyText = JSON.stringify(getMachineExportData());
+  const machineCopyLength = Array.from(machineCopyText).length;
+  els.copyMachineTextButton.textContent = t("copyMachineText");
+  els.copyMachineTextButton.disabled = machineCopyLength > MACHINE_COPY_MAX_CHARS;
+  els.copyMachineTextButton.setAttribute("aria-label", t("copyMachineText"));
+  els.machineCopyInfo.textContent = t(machineCopyLength > MACHINE_COPY_MAX_CHARS
+    ? "machineCopyLimitReached"
+    : "machineCopyCount", {
+    count: machineCopyLength,
+    limit: MACHINE_COPY_MAX_CHARS,
+  });
+  els.machineCopyInfo.classList.toggle("is-over-limit", machineCopyLength > MACHINE_COPY_MAX_CHARS);
   els.textExportOutput.value = getHumanExportText();
 }
 
 function renderImport() {
-  els.importLabel.textContent = t("importScopeTitle");
   els.importFileLabel.textContent = t("importFileLabel");
-  els.importDataButton.textContent = t("import");
+  els.importClipboardLabel.textContent = t("importClipboardLabel");
+  els.importClipboardInput.placeholder = t("importClipboardPlaceholder");
+  els.importDataButton.textContent = t("importPreview");
+  els.importClipboardButton.textContent = t("importClipboardPreview");
+  els.confirmImportButton.textContent = t("importConfirm");
+  els.cancelImportButton.textContent = t("importCancel");
+  els.importPreviewTitle.textContent = t("importPreviewTitle");
+  if (pendingImport) renderImportPreview();
 }
 
 function renderDrawerState() {
   els.drawerLinks.forEach((button) => {
     const target = button.dataset.drawerTarget;
-    const activeTarget = currentView === "calendar" ? "calendars" : currentView;
+    const activeTarget = currentView === "calendar" ? "calendars" : currentView === "import" ? "text" : currentView;
     button.classList.toggle("is-active", target === activeTarget);
   });
 }
@@ -1548,20 +2034,20 @@ function renderBottomNav() {
 
   if (currentView === "text" || currentView === "import") {
     els.goalTabButton.hidden = true;
-    els.primaryTabButton.hidden = false;
+    els.primaryTabButton.hidden = true;
     els.calendarTabButton.hidden = true;
-    els.textTabButton.hidden = true;
-    els.exportTabButton.hidden = true;
-    els.primaryTabButton.textContent = currentView === "text" ? t("text") : t("import");
+    els.textTabButton.hidden = false;
+    els.exportTabButton.hidden = false;
     els.goalTabButton.classList.remove("is-active");
-    els.primaryTabButton.classList.add("is-active");
+    els.primaryTabButton.classList.remove("is-active");
     els.calendarTabButton.classList.remove("is-active");
-    els.textTabButton.classList.remove("is-active");
+    els.textTabButton.classList.toggle("is-active", currentView === "text");
+    els.exportTabButton.classList.toggle("is-active", currentView === "import");
     els.goalTabButton.setAttribute("aria-selected", "false");
-    els.primaryTabButton.setAttribute("aria-selected", "true");
+    els.primaryTabButton.setAttribute("aria-selected", "false");
     els.calendarTabButton.setAttribute("aria-selected", "false");
-    els.textTabButton.setAttribute("aria-selected", "false");
-    els.exportTabButton.setAttribute("aria-selected", "false");
+    els.textTabButton.setAttribute("aria-selected", String(currentView === "text"));
+    els.exportTabButton.setAttribute("aria-selected", String(currentView === "import"));
     return;
   }
 
@@ -1600,42 +2086,38 @@ function renderStaticText() {
   els.themeColorNameLabel.textContent = t("themeColorName");
   els.themeColorInput.value = themeColor;
   els.languageLabel.textContent = t("language");
-  els.languageJaButton.textContent = t("japanese");
-  els.languageEnButton.textContent = t("english");
+  els.languageSelect.value = language;
+  els.languageSelect.options[0].textContent = t("japanese");
+  els.languageSelect.options[1].textContent = t("english");
   els.resetDataLabel.textContent = t("resetData");
   els.resetDataButton.textContent = t("resetDataButton");
-  els.languageJaButton.classList.toggle("is-active", language === "ja");
-  els.languageEnButton.classList.toggle("is-active", language === "en");
   els.resetDialogTitle.textContent = t("resetDialogTitle");
   els.resetDialogMessage.textContent = t("resetDataWarning");
   els.resetConfirmLabel.textContent = t("resetConfirmLabel");
   els.cancelResetButton.textContent = t("cancel");
   els.confirmResetButton.textContent = t("resetConfirmButton");
   els.addGoalFrameButton.textContent = t("addGoalFrameButton");
+  els.addGoalMemoButton.textContent = t("addGoalMemoButton");
   els.globalMemoSectionHeading.textContent = t("memoType");
   els.globalMemoInputLabel.textContent = t("globalMemoInputLabel");
-  els.saveGlobalMemoButton.textContent = t("saveGlobalMemoButton");
+  els.saveGlobalMemoButton.textContent = t("saveLogButton");
   els.drawerLinks.forEach((button) => {
-    const key = button.dataset.drawerTarget;
+    const key = button.dataset.drawerLabel || button.dataset.drawerTarget;
     button.textContent = t(key);
   });
-  els.exportDayButton.textContent = t("oneDay");
-  els.exportWeekButton.textContent = t("oneWeek");
-  els.exportMonthButton.textContent = t("oneMonth");
-  els.exportAllButton.textContent = t("all");
+  els.textTabButton.textContent = t("textExport");
+  els.exportTabButton.textContent = t("import");
   els.copyTextButton.textContent = t("copy");
   els.saveHumanTextButton.textContent = t("saveHumanText");
-  els.saveMachineTextButton.textContent = t("saveMachineText");
-  els.exportScopeHeading.textContent = t("exportScope");
+  els.saveMachineTextButton.textContent = t("saveHumanText");
   els.exportRangeHeading.textContent = t("exportRange");
+  els.exportStartDateLabel.textContent = t("startDate");
+  els.exportEndDateLabel.textContent = t("endDate");
   els.exportHumanHeading.textContent = t("exportHuman");
   els.exportMachineHeading.textContent = t("exportMachine");
-  els.importDataButton.textContent = t("import");
   els.logSectionHeading.textContent = t("logSection");
   els.logDateTimeLabel.textContent = t("logDateTimeLabel");
   els.logInputLabel.textContent = t("logInputLabel");
-  els.logCostLabel.textContent = t("cost");
-  els.logBenefitLabel.textContent = t("benefit");
   els.saveLogButton.textContent = t("saveLogButton");
   els.setLogNowButton.textContent = isLogNowMode ? t("historyMode") : t("currentTime");
   els.setLogNowButton.classList.toggle("is-current-mode", isLogNowMode);
@@ -1643,9 +2125,7 @@ function renderStaticText() {
   els.logDateTimeInput.readOnly = isLogNowMode;
   els.planSectionHeading.textContent = t("planSection");
   els.planInputLabel.textContent = t("planInputLabel");
-  els.costLabel.textContent = t("cost");
-  els.benefitLabel.textContent = t("benefit");
-  els.savePlanButton.textContent = t("savePlanButton");
+  els.savePlanButton.textContent = t("saveLogButton");
   els.appTitle.textContent = t(getTitleKey(currentView));
   renderBottomNav();
 }
@@ -1669,18 +2149,12 @@ function setTheme() {
 }
 
 function setView(view, mode = currentMode) {
+  if (view !== "goal") isGoalEditMode = false;
   if (mode === "log" || mode === "plan" || mode === "memo") {
     if (view === "calendar") calendarScope = mode;
   }
   if (mode === "log" || mode === "plan") {
     currentMode = mode;
-  }
-  if ((view === "calendars" && recordScope === "log") || (view === "calendar" && calendarScope === "log") || (["text", "import"].includes(view) && currentMode === "log")) {
-    lastThemeMode = "log";
-  } else if ((view === "calendars" && recordScope === "plan") || (view === "calendar" && calendarScope === "plan") || (["text", "import"].includes(view) && currentMode === "plan")) {
-    lastThemeMode = "plan";
-  } else if ((view === "calendars" && recordScope === "memo") || view === "import" || (view === "calendar" && calendarScope === "memo")) {
-    lastThemeMode = "memo";
   }
   currentView = view;
   els.appTitle.textContent = t(getTitleKey(view));
@@ -1694,7 +2168,7 @@ function setView(view, mode = currentMode) {
   ].forEach(([name, el]) => {
     el.hidden = name !== view;
   });
-  els.heroSection.hidden = view === "settings";
+  els.heroSection.hidden = ["settings", "text", "import"].includes(view);
   setTheme();
   renderBottomNav();
   renderDrawerState();
@@ -1716,7 +2190,7 @@ function closeDrawer() {
   els.drawerButton.setAttribute("aria-expanded", "false");
 }
 
-function addLog(text, date, cons = "", pros = "") {
+function addLog(text, date) {
   const parts = {
     year: date.getFullYear(),
     month: date.getMonth() + 1,
@@ -1729,13 +2203,12 @@ function addLog(text, date, cons = "", pros = "") {
     dateKey: dateKeyFromDate(date),
     time: formatTime(date),
     text,
-    cons,
-    pros,
+    markerLevel: normalizeMarkerLevel(recordStarLevel),
     isoDateTime: date.toISOString(),
   };
   saveLogs([...loadLogs(), log]);
-  selectedDateKey = log.dateKey;
-  visibleMonthKey = log.dateKey.slice(0, 7);
+  recordDateKey = log.dateKey;
+  recordVisibleMonthKey = log.dateKey.slice(0, 7);
   showToast(t("logSaved", { date: formatSlashDate(parts), time: log.time }));
   renderAll();
 }
@@ -1758,26 +2231,24 @@ function saveLog() {
     els.logDateTimeInput.focus();
     return;
   }
-  addLog(text, date, els.logCostInput.value.trim(), els.logBenefitInput.value.trim());
   els.activityInput.value = "";
-  els.logCostInput.value = "";
-  els.logBenefitInput.value = "";
+  addLog(text, date);
 }
 
 function syncLogNowInput() {
   const current = new Date();
   els.logDateTimeInput.value = localDateTimeValue(current);
-  selectedDateKey = dateKeyFromDate(current);
-  visibleMonthKey = monthKeyFromDate(current);
+  recordDateKey = dateKeyFromDate(current);
+  recordVisibleMonthKey = monthKeyFromDate(current);
 }
 
-function syncSharedDateInputToSelectedDate() {
+function syncSharedDateInputToRecordDate() {
   if (isLogNowMode) return;
   const parts = parseDateTimeInput(els.logDateTimeInput.value);
   const fallback = new Date();
   const hour = parts?.hour ?? fallback.getHours();
   const minute = parts?.minute ?? fallback.getMinutes();
-  els.logDateTimeInput.value = `${selectedDateKey}T${pad(hour)}:${pad(minute)}`;
+  els.logDateTimeInput.value = `${recordDateKey}T${pad(hour)}:${pad(minute)}`;
 }
 
 function getSharedRecordDate() {
@@ -1791,8 +2262,8 @@ function syncSelectedDateFromSharedInput() {
   const parts = parseDateTimeInput(els.logDateTimeInput.value);
   if (!parts) return;
   const date = partsToDate(parts);
-  selectedDateKey = dateKeyFromDate(date);
-  visibleMonthKey = monthKeyFromDate(date);
+  recordDateKey = dateKeyFromDate(date);
+  recordVisibleMonthKey = monthKeyFromDate(date);
   renderAll();
 }
 
@@ -1802,7 +2273,7 @@ function setLogDateTimeMode() {
     syncLogNowInput();
     showToast(t("currentModeEnabled"));
   } else {
-    syncSharedDateInputToSelectedDate();
+    syncSharedDateInputToRecordDate();
     showToast(t("historyModeEnabled"));
   }
   renderAll();
@@ -1831,17 +2302,14 @@ function savePlan() {
     dateKey: dateKeyFromDate(date),
     time: formatTime(date),
     text,
-    cons: els.costInput.value.trim(),
-    pros: els.benefitInput.value.trim(),
+    markerLevel: normalizeMarkerLevel(recordStarLevel),
     isoDateTime: date.toISOString(),
     createdAt: new Date().toISOString(),
   };
   savePlans([...loadPlans(), plan]);
-  selectedDateKey = plan.dateKey;
-  visibleMonthKey = plan.dateKey.slice(0, 7);
+  recordDateKey = plan.dateKey;
+  recordVisibleMonthKey = plan.dateKey.slice(0, 7);
   els.planTextInput.value = "";
-  els.costInput.value = "";
-  els.benefitInput.value = "";
   showToast(t("planSaved", { date: formatDateHeader(plan.dateKey), time: plan.time }));
   renderAll();
 }
@@ -1859,14 +2327,18 @@ function saveMemoFromInput(input) {
     els.logDateTimeInput.focus();
     return;
   }
+  const memoDateKey = dateKeyFromDate(date);
   saveGlobalMemos([...loadGlobalMemos(), {
       id: crypto.randomUUID(),
       text,
-      dateKey: dateKeyFromDate(date),
+      dateKey: memoDateKey,
       time: formatTime(date),
       isoDateTime: date.toISOString(),
       createdAt: new Date().toISOString(),
+      markerLevel: normalizeMarkerLevel(recordStarLevel),
     }]);
+  recordDateKey = memoDateKey;
+  recordVisibleMonthKey = memoDateKey.slice(0, 7);
   input.value = "";
   showToast(t("globalMemoSaved"));
   renderAll();
@@ -1893,7 +2365,10 @@ function createEmptyGoal(frameId) {
 
 function addGoalLine(frameId) {
   const frames = ensureGoalFrames();
-  const targetFrameId = frames.some((frame) => frame.id === frameId) ? frameId : frames[0].id;
+  const targetFrameId = frames.some((frame) => frame.id === frameId && frame.type !== "memo")
+    ? frameId
+    : frames.find((frame) => frame.type !== "memo")?.id;
+  if (!targetFrameId) return;
   createEmptyGoal(targetFrameId);
   renderAll();
 }
@@ -1902,12 +2377,130 @@ function addGoalFrame() {
   const nowIso = new Date().toISOString();
   const frame = {
     id: crypto.randomUUID(),
+    type: "goal",
+    subtitle: "",
+    memoText: "",
     createdAt: nowIso,
     updatedAt: nowIso,
   };
   saveGoalFrames([...ensureGoalFrames(), frame]);
   createEmptyGoal(frame.id);
   renderAll();
+}
+
+function addGoalMemoFrame() {
+  const nowIso = new Date().toISOString();
+  const frame = {
+    id: crypto.randomUUID(),
+    type: "memo",
+    subtitle: "",
+    memoText: "",
+    createdAt: nowIso,
+    updatedAt: nowIso,
+  };
+  saveGoalFrames([...ensureGoalFrames(), frame]);
+  focusGoalMemoFrameId = frame.id;
+  renderAll();
+}
+
+function updateGoalFrameSubtitle(event) {
+  const input = event.currentTarget;
+  const nowIso = new Date().toISOString();
+  saveGoalFrames(loadGoalFramesRaw().map((frame) => frame.id === input.dataset.goalFrameSubtitleId
+    ? { ...frame, subtitle: input.value, updatedAt: nowIso }
+    : frame));
+}
+
+function updateGoalMemoBox(event) {
+  const input = event.currentTarget;
+  const nowIso = new Date().toISOString();
+  saveGoalFrames(loadGoalFramesRaw().map((frame) => frame.id === input.dataset.goalMemoTextId
+    ? { ...frame, memoText: input.value, updatedAt: nowIso }
+    : frame));
+}
+
+function resizeGoalMemo(input) {
+  input.style.height = "auto";
+  const borderHeight = input.offsetHeight - input.clientHeight;
+  input.style.height = `${Math.max(input.scrollHeight + borderHeight, 110)}px`;
+}
+
+function sortableGoalTarget(target) {
+  const line = target.closest(".goal-line");
+  if (line && els.goalList.contains(line)) return { kind: "goal", element: line };
+  const frame = target.closest(".goal-frame-panel");
+  if (frame && els.goalList.contains(frame)) return { kind: "frame", element: frame };
+  return null;
+}
+
+function startGoalDrag(event) {
+  if (!isGoalEditMode || event.button !== 0 || activeGoalDrag) return;
+  if (!event.target.closest(".goal-drag-handle")) return;
+  const sortable = sortableGoalTarget(event.target);
+  if (!sortable) return;
+  event.preventDefault();
+  activeGoalDrag = {
+    ...sortable,
+    pointerId: event.pointerId,
+  };
+  activeGoalDrag.element.classList.add("is-dragging");
+  document.body.classList.add("is-goal-reordering");
+  activeGoalDrag.element.setPointerCapture?.(activeGoalDrag.pointerId);
+}
+
+function moveGoalDrag(event) {
+  if (!activeGoalDrag) return;
+  event.preventDefault();
+  const pointTarget = document.elementFromPoint(event.clientX, event.clientY) || event.target;
+  const hoveredElement = activeGoalDrag.kind === "frame"
+    ? pointTarget.closest(".goal-frame-panel")
+    : pointTarget.closest(".goal-line");
+  const hovered = hoveredElement && els.goalList.contains(hoveredElement)
+    ? { kind: activeGoalDrag.kind, element: hoveredElement }
+    : null;
+  if (!hovered || hovered.kind !== activeGoalDrag.kind || hovered.element === activeGoalDrag.element) return;
+  const source = activeGoalDrag.element;
+  const target = hovered.element;
+  if (source.parentElement !== target.parentElement) return;
+  const rect = target.getBoundingClientRect();
+  const insertAfter = event.clientY > rect.top + rect.height / 2;
+  target.parentElement.insertBefore(source, insertAfter ? target.nextSibling : target);
+}
+
+function finishGoalDrag() {
+  if (!activeGoalDrag) return;
+  const drag = activeGoalDrag;
+  activeGoalDrag = null;
+  drag.element.classList.remove("is-dragging");
+  document.body.classList.remove("is-goal-reordering");
+  if (drag.kind === "frame") {
+    const frames = loadGoalFramesRaw();
+    const nextOrder = frames.slice();
+    ["goal", "memo"].forEach((type) => {
+      const column = els.goalList.querySelector(`.goal-column-${type}`);
+      if (!column) return;
+      const ids = Array.from(column.querySelectorAll(":scope > .goal-frame-panel"))
+        .map((element) => element.dataset.goalFrameId);
+      const reordered = ids.map((id) => frames.find((frame) => frame.id === id)).filter(Boolean);
+      let index = 0;
+      frames.forEach((frame, frameIndex) => {
+        if ((frame.type === "memo" ? "memo" : "goal") === type && reordered[index]) {
+          nextOrder[frameIndex] = reordered[index++];
+        }
+      });
+    });
+    saveGoalFrames(nextOrder);
+    return;
+  }
+  const frameId = drag.element.closest(".goal-frame-panel")?.dataset.goalFrameId;
+  const order = Array.from(drag.element.parentElement.querySelectorAll(":scope > .goal-line"))
+    .map((element) => element.dataset.goalLineId);
+  const allGoals = loadGoals();
+  const frameGoals = allGoals.filter((goal) => goal.frameId === frameId);
+  const goalMap = new Map(frameGoals.map((goal) => [goal.id, goal]));
+  const orderedGoals = order.map((id) => goalMap.get(id)).filter(Boolean);
+  let index = 0;
+  saveGoals(allGoals.map((goal) => goal.frameId === frameId ? orderedGoals[index++] : goal));
 }
 
 function updateGoalBox(event) {
@@ -1932,8 +2525,8 @@ function updateGoalBox(event) {
     : goal));
 }
 
-function getWeekRowIndex(cells) {
-  const selectedIndex = cells.findIndex((cell) => cell.type === "day" && cell.dateKey === selectedDateKey);
+function getWeekRowIndex(cells, activeDateKey = selectedDateKey) {
+  const selectedIndex = cells.findIndex((cell) => cell.type === "day" && cell.dateKey === activeDateKey);
   return selectedIndex >= 0 ? Math.floor(selectedIndex / 7) : 0;
 }
 
@@ -1946,28 +2539,40 @@ function lastDateKeyOfMonth(month) {
   return `${month.key}-${pad(lastDate)}`;
 }
 
-function moveVisiblePeriod(direction) {
+function moveVisiblePeriod(direction, target = "main") {
   const range = getMonthRange();
-  let monthIndex = range.findIndex((item) => item.key === visibleMonthKey);
+  const isRecordTarget = target === "record";
+  let targetVisibleMonthKey = isRecordTarget ? recordVisibleMonthKey : visibleMonthKey;
+  let targetDateKey = isRecordTarget ? recordDateKey : selectedDateKey;
+  let monthIndex = range.findIndex((item) => item.key === targetVisibleMonthKey);
   if (monthIndex < 0) monthIndex = 0;
-  if (isCalendarExpanded) {
+  const isExpanded = isRecordTarget ? isRecordCalendarExpanded : isCalendarExpanded;
+  const applyTargetDate = (dateKey, monthKey = dateKey.slice(0, 7)) => {
+    if (isRecordTarget) {
+      recordDateKey = dateKey;
+      recordVisibleMonthKey = monthKey;
+      syncSharedDateInputToRecordDate();
+      return;
+    }
+    selectedDateKey = dateKey;
+    visibleMonthKey = monthKey;
+  };
+  if (isExpanded) {
     const next = range[monthIndex + direction];
     if (!next) return;
-    visibleMonthKey = next.key;
-    selectedDateKey = direction > 0 ? firstDateKeyOfMonth(next) : lastDateKeyOfMonth(next);
+    applyTargetDate(direction > 0 ? firstDateKeyOfMonth(next) : lastDateKeyOfMonth(next), next.key);
     renderAll();
     return;
   }
   let month = range[monthIndex];
   let cells = buildMonthCells(month.year, month.month, logsByDate(), plansByDate(), getMemoMapForScope());
-  let rowIndex = getWeekRowIndex(cells) + direction;
+  let rowIndex = getWeekRowIndex(cells, targetDateKey) + direction;
   if (rowIndex < 0) {
     monthIndex -= 1;
     if (monthIndex < 0) return;
     month = range[monthIndex];
     cells = buildMonthCells(month.year, month.month, logsByDate(), plansByDate(), getMemoMapForScope());
-    selectedDateKey = lastDateKeyOfMonth(month);
-    visibleMonthKey = month.key;
+    applyTargetDate(lastDateKeyOfMonth(month), month.key);
     renderAll();
     return;
   }
@@ -1976,16 +2581,14 @@ function moveVisiblePeriod(direction) {
     if (monthIndex >= range.length) return;
     month = range[monthIndex];
     cells = buildMonthCells(month.year, month.month, logsByDate(), plansByDate(), getMemoMapForScope());
-    selectedDateKey = firstDateKeyOfMonth(month);
-    visibleMonthKey = month.key;
+    applyTargetDate(firstDateKeyOfMonth(month), month.key);
     renderAll();
     return;
   }
   const dayCells = cells.slice(rowIndex * 7, rowIndex * 7 + 7).filter((cell) => cell.type === "day");
   const targetDay = direction < 0 ? dayCells[dayCells.length - 1] : dayCells[0];
   if (!targetDay) return;
-  selectedDateKey = targetDay.dateKey;
-  visibleMonthKey = range[monthIndex].key;
+  applyTargetDate(targetDay.dateKey, range[monthIndex].key);
   renderAll();
 }
 
@@ -2007,7 +2610,10 @@ async function copyText() {
 }
 
 function getExportFileName(kind, extension) {
-  return `uncharted-calendar-${textScope}-${textExportMode}-${selectedDateKey}-${kind}.${extension}`;
+  const rangeName = textExportMode === "custom"
+    ? `${exportStartDateKey}-to-${exportEndDateKey}`
+    : "all-dates";
+  return `uncharted-calendar-all-${rangeName}-${exportMarkerLevel || "all-stars"}-${kind}.${extension}`;
 }
 
 function downloadFile(filename, content, type) {
@@ -2034,7 +2640,7 @@ function saveHumanExportFile() {
 
 function saveMachineExportFile() {
   const data = getMachineExportData();
-  if (!data.dates.some((group) => group.items.length)) {
+  if (!machineExportHasItems(data)) {
     showToast(t("noExportText"), "error");
     return;
   }
@@ -2044,6 +2650,50 @@ function saveMachineExportFile() {
     "application/json;charset=utf-8",
   );
   showToast(t("fileSaved"));
+}
+
+function machineExportHasItems(data) {
+  return data.dates.some((group) => group.items.length)
+    || data.goals.length > 0
+    || data.goalFrames.some((frame) => frame.type === "memo" && String(frame.memoText || "").trim());
+}
+
+async function copyMachineExportData() {
+  const data = getMachineExportData();
+  if (!machineExportHasItems(data)) {
+    showToast(t("noExportText"), "error");
+    return;
+  }
+  const text = JSON.stringify(data);
+  const length = Array.from(text).length;
+  if (length > MACHINE_COPY_MAX_CHARS) {
+    showToast(t("machineCopyTooLarge", { limit: MACHINE_COPY_MAX_CHARS }), "error");
+    return;
+  }
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      throw new Error("Clipboard API unavailable");
+    }
+    showToast(t("copied"));
+  } catch (error) {
+    const temporaryInput = document.createElement("textarea");
+    temporaryInput.value = text;
+    temporaryInput.setAttribute("readonly", "");
+    temporaryInput.style.position = "fixed";
+    temporaryInput.style.opacity = "0";
+    document.body.appendChild(temporaryInput);
+    temporaryInput.select();
+    const copied = document.execCommand("copy");
+    temporaryInput.remove();
+    if (copied) {
+      showToast(t("copied"));
+    } else {
+      console.error("Import data copy failed", error);
+      showToast(t("copyFailed"), "error");
+    }
+  }
 }
 
 function setLanguage(nextLanguage) {
@@ -2088,37 +2738,57 @@ function resetInternalData() {
   now = new Date();
   selectedDateKey = dateKeyFromDate(now);
   visibleMonthKey = monthKeyFromDate(now);
+  recordDateKey = dateKeyFromDate(now);
+  recordVisibleMonthKey = monthKeyFromDate(now);
   currentMode = "log";
   calendarScope = "log";
   textExportMode = "all";
-  textScope = "all";
+  exportStartDateKey = selectedDateKey;
+  exportEndDateKey = selectedDateKey;
+  exportMarkerLevel = 0;
+  markerFilterLevel = 0;
+  recordStarLevel = 1;
   isLogNowMode = false;
-  lastThemeMode = "plan";
+  isRecordCalendarExpanded = false;
   initializeDateInputs();
   setView("goal");
   showToast(t("resetDataDone"));
 }
 
 function handleEnter(event) {
-  if (event.key !== "Enter" || event.isComposing) return;
+  if (event.key !== "Enter" || event.isComposing || event.repeat) return;
   if (event.shiftKey) return;
   event.preventDefault();
-  if ([els.activityInput, els.logCostInput, els.logBenefitInput].includes(event.currentTarget)) saveLog();
-  if ([els.planTextInput, els.costInput, els.benefitInput].includes(event.currentTarget)) savePlan();
+  if (event.currentTarget === els.activityInput) saveLog();
+  if (event.currentTarget === els.planTextInput) savePlan();
   if (event.currentTarget === els.globalMemoInput) saveGlobalMemo();
 }
 
 function renderAll() {
   applyThemeColors();
   renderStaticText();
+  renderGoalEditControls();
   renderClock();
   renderGoals();
   renderCalendar();
   renderRecordScopeControls();
+  renderStarRatingControls();
   renderCalendarScopeControls();
   renderSelectedEntries();
   renderTextExport();
   renderImport();
+}
+
+function renderGoalEditControls() {
+  els.goalEditToolbar.hidden = currentView !== "goal";
+  els.goalEditModeButton.textContent = t(isGoalEditMode ? "goalEditDone" : "goalEdit");
+  els.goalEditModeButton.setAttribute("aria-pressed", String(isGoalEditMode));
+  els.goalEditModeButton.classList.toggle("is-active", isGoalEditMode);
+}
+
+function toggleGoalEditMode() {
+  isGoalEditMode = !isGoalEditMode;
+  renderAll();
 }
 
 function initializeDateInputs() {
@@ -2127,52 +2797,37 @@ function initializeDateInputs() {
 
 function initialize() {
   migrateLegacyMemos();
+  ensureEntryMarkerDefaults();
   isCalendarExpanded = false;
   initializeDateInputs();
+  window.matchMedia("(orientation: landscape)").addEventListener("change", () => {
+    renderGoals();
+    if (pendingImport) renderImportPreview();
+  });
   els.drawerButton.addEventListener("click", openDrawer);
   els.drawerCloseButton.addEventListener("click", closeDrawer);
   els.drawerBackdrop.addEventListener("click", closeDrawer);
   els.drawerLinks.forEach((button) => button.addEventListener("click", () => setView(button.dataset.drawerTarget)));
   els.settingsIconButton.addEventListener("click", () => setView("settings"));
   els.goalTabButton.addEventListener("click", () => setView("goal"));
-  els.primaryTabButton.addEventListener("click", () => {
-    if (currentView === "text") {
-      setView("text", currentMode);
-      return;
-    }
-    if (currentView === "import") {
-      setView("import", currentMode);
-      return;
-    }
-    setView("calendars", currentMode);
-  });
+  els.primaryTabButton.addEventListener("click", () => setView("calendars", currentMode));
   els.calendarTabButton.addEventListener("click", () => {
-    if (currentView === "text") {
-      setView("text", currentMode);
-      return;
-    }
-    if (currentView === "import") {
-      setView("import", currentMode);
-      return;
-    }
     setView("calendar", calendarScope);
   });
   els.textTabButton.addEventListener("click", () => {
-    if (currentView === "text") {
-      setView("text", currentMode);
-      return;
-    }
-    if (currentView === "import") {
-      setView("import", currentMode);
-      return;
-    }
-    setView("calendar", "plan");
-  });
-  els.exportTabButton.addEventListener("click", () => {
     setView("text");
   });
+  els.exportTabButton.addEventListener("click", () => {
+    setView("import");
+  });
   els.saveLogButton.addEventListener("click", saveLog);
+  els.goalEditModeButton.addEventListener("click", toggleGoalEditMode);
+  els.goalList.addEventListener("pointerdown", startGoalDrag);
+  document.addEventListener("pointermove", moveGoalDrag, { passive: false });
+  document.addEventListener("pointerup", finishGoalDrag);
+  document.addEventListener("pointercancel", finishGoalDrag);
   els.addGoalFrameButton.addEventListener("click", addGoalFrame);
+  els.addGoalMemoButton.addEventListener("click", addGoalMemoFrame);
   els.savePlanButton.addEventListener("click", savePlan);
   els.setLogNowButton.addEventListener("click", setLogDateTimeMode);
   els.saveGlobalMemoButton.addEventListener("click", saveGlobalMemo);
@@ -2193,8 +2848,20 @@ function initialize() {
   els.calendarLogScopeButton.addEventListener("click", () => setView("calendar", "log"));
   els.calendarPlanScopeButton.addEventListener("click", () => setView("calendar", "plan"));
   els.calendarMemoScopeButton.addEventListener("click", () => setView("calendar", "memo"));
-  [els.activityInput, els.logCostInput, els.logBenefitInput, els.planTextInput, els.costInput, els.benefitInput, els.globalMemoInput].forEach((input) => {
+  els.markerFilterGroup.addEventListener("change", () => {
+    markerFilterLevel = Number(els.markerFilterGroup.value);
+    renderSelectedEntries();
+  });
+  [els.activityInput, els.planTextInput, els.globalMemoInput].forEach((input) => {
     input.addEventListener("keydown", handleEnter);
+  });
+  [els.logStarRating, els.planStarRating, els.memoStarRating].forEach((container) => {
+    container.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-star-level]");
+      if (!button) return;
+      recordStarLevel = normalizeMarkerLevel(button.dataset.starLevel);
+      renderStarRatingControls();
+    });
   });
   els.logDateTimeInput.addEventListener("change", syncSelectedDateFromSharedInput);
   els.logDateTimeInput.addEventListener("input", syncSelectedDateFromSharedInput);
@@ -2203,63 +2870,52 @@ function initialize() {
     renderAll();
   });
   els.recordToggleCalendarButton.addEventListener("click", () => {
-    isCalendarExpanded = !isCalendarExpanded;
-    renderAll();
-  });
-  els.textToggleCalendarButton.addEventListener("click", () => {
-    isCalendarExpanded = !isCalendarExpanded;
+    isRecordCalendarExpanded = !isRecordCalendarExpanded;
     renderAll();
   });
   els.prevPeriodButton.addEventListener("click", () => moveVisiblePeriod(-1));
   els.nextPeriodButton.addEventListener("click", () => moveVisiblePeriod(1));
-  els.recordPrevPeriodButton.addEventListener("click", () => moveVisiblePeriod(-1));
-  els.recordNextPeriodButton.addEventListener("click", () => moveVisiblePeriod(1));
-  els.textPrevPeriodButton.addEventListener("click", () => moveVisiblePeriod(-1));
-  els.textNextPeriodButton.addEventListener("click", () => moveVisiblePeriod(1));
-  els.exportDayButton.addEventListener("click", () => {
-    textExportMode = "day";
+  els.recordPrevPeriodButton.addEventListener("click", () => moveVisiblePeriod(-1, "record"));
+  els.recordNextPeriodButton.addEventListener("click", () => moveVisiblePeriod(1, "record"));
+  els.exportRangeSelect.addEventListener("change", () => {
+    textExportMode = els.exportRangeSelect.value;
     renderAll();
   });
-  els.exportWeekButton.addEventListener("click", () => {
-    textExportMode = "week";
-    renderAll();
+  [els.exportStartDateInput, els.exportEndDateInput].forEach((input) => {
+    input.addEventListener("input", () => {
+      exportStartDateKey = els.exportStartDateInput.value || selectedDateKey;
+      exportEndDateKey = els.exportEndDateInput.value || selectedDateKey;
+      if (exportStartDateKey > exportEndDateKey) {
+        if (input === els.exportStartDateInput) {
+          exportEndDateKey = exportStartDateKey;
+        } else {
+          exportStartDateKey = exportEndDateKey;
+        }
+      }
+      renderAll();
+    });
   });
-  els.exportMonthButton.addEventListener("click", () => {
-    textExportMode = "month";
-    renderAll();
-  });
-  els.exportAllButton.addEventListener("click", () => {
-    textExportMode = "all";
-    renderAll();
-  });
-  els.exportScopeAllButton.addEventListener("click", () => {
-    textScope = "all";
-    renderAll();
-  });
-  els.exportScopeLogButton.addEventListener("click", () => {
-    textScope = "log";
-    renderAll();
-  });
-  els.exportScopePlanButton.addEventListener("click", () => {
-    textScope = "plan";
-    renderAll();
-  });
-  els.exportScopeMemoButton.addEventListener("click", () => {
-    textScope = "memo";
-    renderAll();
-  });
-  els.exportScopeGoalButton.addEventListener("click", () => {
-    textScope = "goal";
+  els.exportMarkerSelect.addEventListener("change", () => {
+    exportMarkerLevel = Number(els.exportMarkerSelect.value);
     renderAll();
   });
   els.copyTextButton.addEventListener("click", copyText);
+  els.copyMachineTextButton.addEventListener("click", copyMachineExportData);
   els.saveHumanTextButton.addEventListener("click", saveHumanExportFile);
   els.saveMachineTextButton.addEventListener("click", saveMachineExportFile);
-  els.importDataButton.addEventListener("click", importSelectedFile);
+  els.importDataButton.addEventListener("click", prepareImportPreview);
+  els.importClipboardButton.addEventListener("click", prepareClipboardImportPreview);
+  els.importFileInput.addEventListener("change", () => {
+    pendingImport = null;
+    els.importPreviewPanel.hidden = true;
+    els.importPreviewList.replaceChildren();
+  });
+  els.confirmImportButton.addEventListener("click", confirmSelectedImport);
+  els.cancelImportButton.addEventListener("click", cancelImportPreview);
+  els.importPreviewList.addEventListener("change", handleImportPreviewInput);
   els.themeColorInput.addEventListener("input", () => setThemeColor(els.themeColorInput.value));
   els.themeColorInput.addEventListener("change", () => setThemeColor(els.themeColorInput.value, true));
-  els.languageJaButton.addEventListener("click", () => setLanguage("ja"));
-  els.languageEnButton.addEventListener("click", () => setLanguage("en"));
+  els.languageSelect.addEventListener("change", () => setLanguage(els.languageSelect.value));
   els.resetDataButton.addEventListener("click", openResetDialog);
   els.cancelResetButton.addEventListener("click", () => closeResetDialog());
   els.confirmResetButton.addEventListener("click", resetInternalData);
